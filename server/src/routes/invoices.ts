@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { Invoice } from '../models/Invoice.js';
 import { CustomerAccount } from '../models/CustomerAccount.js';
 import { auth } from '../middleware/auth.js';
+import { sendNotification, sendGenericMessage } from '../services/communicationService.js';
+import { generateMessage } from '../services/messageGenerator.js';
 
 export const invoiceRouter = Router();
 
@@ -17,66 +19,108 @@ invoiceRouter.post('/', async (req, res) => {
     }
 });
 
-// Import Live Pending Khata Balances into Voice Auto-Pilot Queue
+// Import Live Pending Khata Balances AND immediately trigger WhatsApp + Call
 invoiceRouter.post('/import-khata', auth, async (req, res) => {
     try {
-        // Find all Khata accounts for this shopkeeper that have pending dues (balance > 0)
         const overdueAccounts = await CustomerAccount.find({
             shopkeeperId: req.auth?.userId,
             balance: { $gt: 0 }
         }).populate('customerId');
 
         let importedCount = 0;
+        let calledCount = 0;
+        const results: string[] = [];
         const pastDate = new Date();
-        if (process.env.DEMO_MODE === 'true') {
-            pastDate.setMinutes(pastDate.getMinutes() - 5); // 5 minutes ago — triggers all demo thresholds instantly
-        } else {
-            pastDate.setDate(pastDate.getDate() - 15); // 15 days ago for production
-        }
+        pastDate.setMinutes(pastDate.getMinutes() - 5);
 
         for (const account of overdueAccounts) {
             const customer = account.customerId as any;
             if (!customer || !customer.phoneNumber) continue;
 
-            const cleanPhone = customer.phoneNumber.replace('whatsapp:', '').replace('+', '\\+');
+            const last10 = customer.phoneNumber.replace(/[^0-9]/g, '').slice(-10);
+            if (!last10 || last10.length < 10) continue;
 
-            // Check if AI is already chasing this client natively (any active status)
+            // Check if already being chased
             const existingInvoice = await Invoice.findOne({
-                client_phone: { $regex: new RegExp(cleanPhone.slice(-10) + '$') },
+                client_phone: { $regex: new RegExp(last10 + '$') },
                 status: { $in: ['unpaid', 'overdue', 'promised', 'disputed'] }
             });
 
-            if (!existingInvoice) {
-                // Bridge Khata to Invoice Chaser
-                const khataInvoice = new Invoice({
-                    invoice_id: `KHATA-${Math.floor(Math.random() * 100000)}`,
+            let invoice = existingInvoice;
+
+            if (!invoice) {
+                invoice = new Invoice({
+                    invoice_id: `KHATA-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
                     client_name: customer.name || 'Valued Customer',
                     client_email: `${(customer.name || 'user').replace(/\s/g, '').toLowerCase()}@example.com`,
                     client_phone: customer.phoneNumber,
                     amount: account.balance,
-                    due_date: pastDate, // Overdue instantly 
+                    due_date: pastDate,
                     status: 'overdue',
-                    reminder_level: 0   // Start at 0 so escalation engine sends WhatsApp first
+                    reminder_level: 0
                 });
-                await khataInvoice.save();
+                await invoice.save();
                 importedCount++;
             }
+
+            // ── IMMEDIATELY SEND WHATSAPP ──
+            try {
+                const waMessage = `Hello ${invoice.client_name}! 🙏\n\nThis is a friendly reminder from your KiranaLink store.\n\nYou have a pending balance of *₹${invoice.amount}*.\n\nPlease pay at your earliest convenience.\n\n- KiranaLink AI Agent`;
+                const waStatus = await sendGenericMessage(customer.phoneNumber, waMessage, 'whatsapp');
+
+                invoice.reminder_history.push({
+                    timestamp: new Date(),
+                    channel: 'whatsapp',
+                    message_content: waMessage,
+                    delivery_status: waStatus
+                });
+                invoice.last_contacted_at = new Date();
+                results.push(`WhatsApp sent to ${invoice.client_name}: ${waStatus}`);
+                console.log(`[ImportKhata] ✅ WhatsApp sent to ${invoice.client_name} (${waStatus})`);
+            } catch (waErr) {
+                console.error(`[ImportKhata] WhatsApp failed for ${invoice.client_name}:`, waErr);
+                results.push(`WhatsApp FAILED for ${invoice.client_name}`);
+            }
+
+            // ── IMMEDIATELY MAKE VOICE CALL ──
+            try {
+                const callMessage = await generateMessage(invoice, 'friendly reminder', 'call');
+                const callStatus = await sendNotification(invoice, callMessage, 'call');
+
+                invoice.reminder_level = 3; // Mark as called
+                invoice.reminder_history.push({
+                    timestamp: new Date(),
+                    channel: 'call',
+                    message_content: callMessage,
+                    delivery_status: callStatus
+                });
+                calledCount++;
+                results.push(`Call to ${invoice.client_name}: ${callStatus}`);
+                console.log(`[ImportKhata] ✅ Call placed to ${invoice.client_name} (${callStatus})`);
+            } catch (callErr) {
+                console.error(`[ImportKhata] Call failed for ${invoice.client_name}:`, callErr);
+                results.push(`Call FAILED for ${invoice.client_name}`);
+            }
+
+            await invoice.save();
         }
 
-        res.json({ message: `Successfully synchronized ${importedCount} pending Khata customers into the Voice Auto-Pilot queue.` });
+        res.json({
+            message: `Synced ${importedCount} customers. Sent ${results.filter(r => r.includes('WhatsApp sent')).length} WhatsApp messages. Placed ${calledCount} calls.`,
+            details: results
+        });
     } catch (error) {
-        console.error('Error importing khata to invoices:', error);
-        res.status(500).json({ error: 'Failed to synchronize Khata balances' });
+        console.error('Error in import-khata:', error);
+        res.status(500).json({ error: 'Failed to sync Khata' });
     }
 });
 
-// List overdue invoices (must be defined BEFORE /:id logic, though there are no pure /:id routes right now)
+// List overdue
 invoiceRouter.get('/overdue', async (req, res) => {
     try {
         const invoices = await Invoice.find({ status: 'overdue' }).sort({ due_date: 1 });
         res.json(invoices);
     } catch (error) {
-        console.error('Error fetching overdue invoices:', error);
         res.status(500).json({ error: 'Failed to fetch overdue invoices' });
     }
 });
@@ -87,7 +131,6 @@ invoiceRouter.get('/', async (req, res) => {
         const invoices = await Invoice.find().sort({ createdAt: -1 });
         res.json(invoices);
     } catch (error) {
-        console.error('Error fetching invoices:', error);
         res.status(500).json({ error: 'Failed to fetch invoices' });
     }
 });
@@ -96,24 +139,19 @@ invoiceRouter.get('/', async (req, res) => {
 invoiceRouter.put('/:id/status', async (req, res) => {
     try {
         const { status } = req.body;
-        // Look up by invoice_id, not MongoDB _id
         const invoice = await Invoice.findOneAndUpdate(
             { invoice_id: req.params.id },
             { status },
             { new: true }
         );
-        if (!invoice) {
-            res.status(404).json({ error: 'Invoice not found' });
-            return;
-        }
+        if (!invoice) { res.status(404).json({ error: 'Invoice not found' }); return; }
         res.json(invoice);
     } catch (error) {
-        console.error('Error updating invoice status:', error);
         res.status(500).json({ error: 'Failed to update invoice status' });
     }
 });
 
-// Record payment confirmation explicitly (Stops reminders)
+// Record payment
 invoiceRouter.put('/:id/payment', async (req, res) => {
     try {
         const now = new Date();
@@ -126,21 +164,16 @@ invoiceRouter.put('/:id/payment', async (req, res) => {
                     reminder_history: {
                         timestamp: now,
                         channel: 'system',
-                        message_content: 'Payment explicitly confirmed and recorded. Escalation halted.',
+                        message_content: 'Payment confirmed. Escalation halted.',
                         delivery_status: 'delivered'
                     }
                 }
             },
             { new: true }
         );
-
-        if (!invoice) {
-            res.status(404).json({ error: 'Invoice not found' });
-            return;
-        }
+        if (!invoice) { res.status(404).json({ error: 'Invoice not found' }); return; }
         res.json(invoice);
     } catch (error) {
-        console.error('Error recording invoice payment:', error);
         res.status(500).json({ error: 'Failed to record payment' });
     }
 });
