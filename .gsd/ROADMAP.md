@@ -13,7 +13,7 @@
 ## Phases
 
 ### Phase 1: Data Model & Invoice APIs
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Build the `Invoice` schema (amount, status, due_date, reminder_level, history) and standard REST endpoints. Create the foundational structure.
 **Requirements**: REQ-01, REQ-06
 
