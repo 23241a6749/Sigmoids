@@ -27,6 +27,7 @@ import analyticsRouter from './routes/analytics.js';
 import { supplierBillsRouter } from './routes/supplierBills.js';
 import { aiRouter } from './routes/ai.js';
 import { invoiceRouter } from './routes/invoices.js';
+import { invoiceWebhooksRouter } from './routes/invoiceWebhooks.js';
 import { startInvoiceScheduler } from './jobs/reminderScheduler.js';
 
 const app = express();
@@ -63,6 +64,8 @@ app.use('/api/analytics', analyticsRouter);
 app.use('/api/supplier-bills', supplierBillsRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/invoices', invoiceRouter);
+app.use('/api/invoices/webhook', invoiceWebhooksRouter);
+
 io.on('connection', (socket) => {
     console.log('User connected to socket:', socket.id);
 });
