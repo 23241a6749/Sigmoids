@@ -649,18 +649,48 @@ export const BillingPage: React.FC = () => {
                 </div>
             </div>
 
-            {/* Sticky Order Button (if not in checkout) */}
+            {/* Sticky View Cart Button */}
             {!showCheckout && cart.length > 0 && (
-                <div className="fixed bottom-24 left-4 right-4 md:bottom-6 md:left-72 md:right-8 z-40">
+                <div className="fixed bottom-24 left-4 right-4 md:bottom-6 md:left-72 md:right-8 z-40 animate-slide-up">
                     <button
                         onClick={() => setShowCheckout(true)}
-                        className="w-full bg-primary-green text-white p-4 rounded-2xl shadow-xl flex justify-between items-center animate-slide-up hover:shadow-2xl transition-all border border-white/10 backdrop-blur-md"
+                        className="w-full relative overflow-hidden rounded-2xl text-white p-0 shadow-2xl active:scale-[0.97] transition-transform duration-150"
+                        style={{
+                            background: 'linear-gradient(135deg, #1B5E20 0%, #2E7D32 45%, #388E3C 100%)',
+                            boxShadow: '0 8px 32px rgba(46,125,50,0.45), 0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'
+                        }}
                     >
-                        <div className="flex items-center gap-3">
-                            <span className="bg-white/20 w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm">{cart.reduce((a, b) => a + b.quantity, 0)}</span>
-                            <span className="font-bold font-black">{t.viewCart}</span>
+                        {/* shimmer sweep */}
+                        <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                                background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.08) 50%, transparent 60%)',
+                                backgroundSize: '200% 100%',
+                                animation: 'shimmer 2.5s infinite linear'
+                            }}
+                        />
+                        <div className="relative flex items-center justify-between px-5 py-4">
+                            {/* left: badge + label */}
+                            <div className="flex items-center gap-3">
+                                <div
+                                    className="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm"
+                                    style={{ background: 'rgba(255,255,255,0.18)', backdropFilter: 'blur(4px)' }}
+                                >
+                                    {cart.reduce((a, b) => a + b.quantity, 0)}
+                                </div>
+                                <div>
+                                    <div className="font-black text-base tracking-tight leading-none">{t.viewCart}</div>
+                                    <div className="text-white/60 text-[11px] font-semibold mt-0.5">
+                                        {cart.length} {cart.length === 1 ? 'item' : 'items'}
+                                    </div>
+                                </div>
+                            </div>
+                            {/* right: total */}
+                            <div className="flex items-center gap-2">
+                                <span className="font-black text-2xl tracking-tight">₹{cartTotal}</span>
+                                <ChevronRight size={20} className="text-white/70" />
+                            </div>
                         </div>
-                        <span className="font-black text-xl">₹{cartTotal}</span>
                     </button>
                 </div>
             )}
@@ -1049,9 +1079,48 @@ export const BillingPage: React.FC = () => {
                                 <button
                                     onClick={paymentMethod === 'online' ? handleUpiPayment : paymentMethod === 'cash' ? handleCashPayment : handleLedgePayment}
                                     disabled={!paymentMethod || (paymentMethod === 'ledger' && khataInfo !== null && cartTotal > khataInfo.availableCredit)}
-                                    className="w-full bg-primary-green text-white py-4 rounded-xl font-bold text-lg shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-emerald-600 active:scale-[0.98] transition-all"
+                                    className="w-full relative overflow-hidden rounded-2xl text-white py-5 font-black text-lg active:scale-[0.97] transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                                    style={!paymentMethod || (paymentMethod === 'ledger' && khataInfo !== null && cartTotal > khataInfo.availableCredit)
+                                        ? { background: '#374151' }
+                                        : paymentMethod === 'cash'
+                                            ? {
+                                                background: 'linear-gradient(135deg,#1B5E20 0%,#2E7D32 50%,#388E3C 100%)',
+                                                boxShadow: '0 8px 28px rgba(46,125,50,0.5), inset 0 1px 0 rgba(255,255,255,0.12)'
+                                            }
+                                            : paymentMethod === 'online'
+                                                ? {
+                                                    background: 'linear-gradient(135deg,#4A148C 0%,#7B1FA2 50%,#9C27B0 100%)',
+                                                    boxShadow: '0 8px 28px rgba(123,31,162,0.5), inset 0 1px 0 rgba(255,255,255,0.12)'
+                                                }
+                                                : {
+                                                    background: 'linear-gradient(135deg,#BF360C 0%,#EF6C00 50%,#FF8F00 100%)',
+                                                    boxShadow: '0 8px 28px rgba(239,108,0,0.5), inset 0 1px 0 rgba(255,255,255,0.12)'
+                                                }
+                                    }
                                 >
-                                    Make Payment
+                                    {/* shimmer sweep */}
+                                    {paymentMethod && (
+                                        <div
+                                            className="absolute inset-0 pointer-events-none"
+                                            style={{
+                                                background: 'linear-gradient(105deg,transparent 40%,rgba(255,255,255,0.10) 50%,transparent 60%)',
+                                                backgroundSize: '200% 100%',
+                                                animation: 'shimmer 2s infinite linear'
+                                            }}
+                                        />
+                                    )}
+                                    <span className="relative flex items-center justify-center gap-2">
+                                        {paymentMethod === 'cash' && <span className="text-xl">💵</span>}
+                                        {paymentMethod === 'online' && <span className="text-xl">📲</span>}
+                                        {paymentMethod === 'ledger' && <span className="text-xl">📒</span>}
+                                        {!paymentMethod && <span className="text-xl">💳</span>}
+                                        {
+                                            !paymentMethod ? 'Select a payment method'
+                                                : paymentMethod === 'cash' ? `Collect ₹${cartTotal} Cash`
+                                                    : paymentMethod === 'online' ? `Pay ₹${cartTotal} via UPI`
+                                                        : `Add ₹${cartTotal} to Khata`
+                                        }
+                                    </span>
                                 </button>
                             </div>
                         </div>
