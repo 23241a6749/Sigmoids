@@ -1,6 +1,8 @@
 import cron from 'node-cron';
 import { Invoice } from '../models/Invoice.js';
 import { evaluateEscalation } from '../utils/escalationEngine.js';
+import { generateMessage } from '../services/messageGenerator.js';
+import { sendNotification } from '../services/communicationService.js';
 
 export function startInvoiceScheduler() {
     // Run every minute (useful for hackathon demo mode tests, can be tweaked to '0 * * * *' for hourly later)
@@ -16,7 +18,13 @@ export function startInvoiceScheduler() {
                 if (escalation.shouldRemind) {
                     console.log(`[Invoice Scheduler] Triggering ${escalation.tone} for client ${invoice.client_name} (Level ${escalation.level})`);
 
-                    // Simulate "Sending Message" to communication layer here later ...
+                    // Generate AI text and send notification
+                    const channel = invoice.client_phone ? 'whatsapp' : 'email';
+                    const generatedMessage = await generateMessage(invoice, escalation.tone, channel);
+
+                    console.log(`[Invoice Scheduler] Sending: "${generatedMessage}" via ${channel}`);
+
+                    const delivery_status = await sendNotification(invoice, generatedMessage, channel);
 
                     // Update invoice state
                     const now = new Date();
@@ -26,9 +34,9 @@ export function startInvoiceScheduler() {
 
                     invoice.reminder_history.push({
                         timestamp: now,
-                        channel: 'simulated_system', // Placeholder 
-                        message_content: `Simulated ${escalation.tone} sent.`,
-                        delivery_status: 'simulated_success'
+                        channel,
+                        message_content: generatedMessage,
+                        delivery_status
                     });
 
                     await invoice.save();
