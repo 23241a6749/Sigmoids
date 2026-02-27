@@ -1,0 +1,78 @@
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({ path: join(__dirname, '../.env') });
+
+import dns from 'dns';
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import passport from 'passport';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import './config/passport.js';
+import { authRouter } from './routes/auth.js';
+import { productRouter } from './routes/products.js';
+import { customerRouter } from './routes/customers.js';
+import { billRouter } from './routes/bills.js';
+import { ledgerRouter } from './routes/ledger.js';
+import { groupBuyRouter } from './routes/groupBuy.js';
+import { whatsappRouter } from './routes/whatsapp.js';
+import analyticsRouter from './routes/analytics.js';
+import { supplierBillsRouter } from './routes/supplierBills.js';
+import { aiRouter } from './routes/ai.js';
+
+const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
+
+const PORT = process.env.PORT || 5000;
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(passport.initialize());
+
+// Attach socket to request
+app.use((req: any, res, next) => {
+    req.io = io;
+    next();
+});
+
+// Routes
+app.use('/api/auth', authRouter);
+app.use('/api/products', productRouter);
+app.use('/api/customers', customerRouter);
+app.use('/api/bills', billRouter);
+app.use('/api/ledger', ledgerRouter);
+app.use('/api/group-buy', groupBuyRouter);
+app.use('/api/whatsapp', whatsappRouter);
+app.use('/api/analytics', analyticsRouter);
+app.use('/api/supplier-bills', supplierBillsRouter);
+app.use('/api/ai', aiRouter);
+
+io.on('connection', (socket) => {
+    console.log('User connected to socket:', socket.id);
+});
+
+// Database Connection
+mongoose.connect(process.env.MONGODB_URI!)
+    .then(() => {
+        console.log('Connected to MongoDB Atlas');
+        httpServer.listen(PORT, () => {
+            console.log(`Server (ShopOS) is running on port ${PORT}`);
+        });
+    })
+    .catch((err) => {
+        console.error('MongoDB connection error:', err);
+    });

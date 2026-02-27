@@ -1,0 +1,749 @@
+
+> gramin-link@0.0.0 lint
+> eslint .
+
+
+D:\Vivitsu\4bytes\server\src\config\passport.ts
+  45:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\auth.ts
+  32:14  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  54:14  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  68:11  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  83:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:14  error  'err' is defined but never used           @typescript-eslint/no-unused-vars
+
+D:\Vivitsu\4bytes\server\src\routes\bills.ts
+  76:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  88:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\customers.ts
+  11:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  22:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\groupBuy.ts
+  10:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\ledger.ts
+  13:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  42:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\products.ts
+   11:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   22:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   32:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\server\src\routes\whatsapp.ts
+   12:32  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   16:19  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   30:7   error  'openai' is assigned a value but never used                                                                          @typescript-eslint/no-unused-vars
+   34:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   38:9   error  'geminiModel' is assigned a value but never used                                                                     @typescript-eslint/no-unused-vars
+   40:10  error  'e' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+   46:37  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   55:15  error  'senderClean' is assigned a value but never used                                                                     @typescript-eslint/no-unused-vars
+   57:67  error  'v' is defined but never used                                                                                        @typescript-eslint/no-unused-vars
+   83:21  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+   86:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  117:49  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  148:72  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  172:39  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  173:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  187:75  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  194:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  228:42  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  229:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  236:42  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  238:18  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\components\GroupBuyCard.tsx
+  6:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\components\HostDealModal.tsx
+  11:108  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:54   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\components\LiveTicker.tsx
+  13:30  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\components\LiveTicker.tsx:13:30
+  11 |   const timeAgo = (ts?: number) => {
+  12 |     if (!ts) return 'just now'
+> 13 |     const diff = Math.floor((Date.now() - ts) / 1000)
+     |                              ^^^^^^^^^^ Cannot call impure function
+  14 |     if (diff < 60) return `${diff}s ago`
+  15 |     if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  16 |     return `${Math.floor(diff / 3600)}h ago`  react-hooks/purity
+
+D:\Vivitsu\4bytes\src\components\WhatsAppLiveFeed.tsx
+   10:11   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+   17:42   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-explicit-any
+  123:148  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\components\WhatsAppLiveFeed.tsx:123:148
+  121 |                                 </div>
+  122 |                             </div>
+> 123 |                             <span className="text-xs text-gray-400 font-mono bg-white px-2 py-1 rounded border shadow-sm">{new Date(e.timestamp || Date.now()).toLocaleTimeString()}</span>
+      |                                                                                                                                                    ^^^^^^^^^^ Cannot call impure function
+  124 |                         </div>
+  125 |                     ))}
+  126 |                     {events.length === 0 && (  react-hooks/purity
+
+D:\Vivitsu\4bytes\src\components\recovery\BatchCallModal.tsx
+   6:108  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+   7:40   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  38:13   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Vivitsu\4bytes\src\components\recovery\BatchCallModal.tsx:38:13
+  36 |     useEffect(() => {
+  37 |         if (isOpen && customers.length > 0) {
+> 38 |             setQueue(customers.map((c, i) => ({ ...c, status: 'pending', isReal: i === 0 })));
+     |             ^^^^^^^^ Avoid calling setState() directly within an effect
+  39 |             setCurrentIndex(0);
+  40 |             setIsProcessing(false);
+  41 |             setCompleted(false);  react-hooks/set-state-in-effect
+
+D:\Vivitsu\4bytes\src\components\recovery\DefaulterCard.tsx
+  3:61  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  3:88  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\components\recovery\LiveCallModal.tsx
+   10:77   error    Unexpected any. Specify a different type                                                                                                                    @typescript-eslint/no-explicit-any
+   10:136  error    Unexpected any. Specify a different type                                                                                                                    @typescript-eslint/no-explicit-any
+   12:50   error    Unexpected any. Specify a different type                                                                                                                    @typescript-eslint/no-explicit-any
+   70:20   error    Unexpected any. Specify a different type                                                                                                                    @typescript-eslint/no-explicit-any
+  113:8    warning  React Hook useEffect has missing dependencies: 'customer', 'endCall', 'startCall', and 'useSimulation'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+  209:25   error    Unexpected any. Specify a different type                                                                                                                    @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\components\recovery\RecoveryMissionControl.tsx
+   9:116  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  10:40   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  18:50   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  19:56   error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-explicit-any
+  65:13   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Vivitsu\4bytes\src\components\recovery\RecoveryMissionControl.tsx:65:13
+  63 |     useEffect(() => {
+  64 |         if (isOpen && !isOpenPrev && customers.length > 0) {
+> 65 |             setQueue(customers.map((c, i) => ({ ...c, status: 'pending', isReal: i === 0 })));
+     |             ^^^^^^^^ Avoid calling setState() directly within an effect
+  66 |             setCurrentIndex(0);
+  67 |             setIsProcessing(false);
+  68 |             setCompleted(false);  react-hooks/set-state-in-effect
+
+D:\Vivitsu\4bytes\src\contexts\AuthContext.tsx
+  35:21  error  Error: Cannot access variable before it is declared
+
+`logout` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\contexts\AuthContext.tsx:35:21
+  33 |                 } catch (err) {
+  34 |                     console.error('Failed to fetch user', err);
+> 35 |                     logout();
+     |                     ^^^^^^ `logout` accessed before it is declared
+  36 |                 }
+  37 |             }
+  38 |             setLoading(false);
+
+D:\Vivitsu\4bytes\src\contexts\AuthContext.tsx:49:5
+  47 |     };
+  48 |
+> 49 |     const logout = () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^
+> 50 |         localStorage.removeItem('token');
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 51 |         setToken(null);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 52 |         setUser(null);
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 53 |     };
+     | ^^^^^^^ `logout` is declared here
+  54 |
+  55 |     return (
+  56 |         <AuthContext.Provider value={{ user, token, login, logout, loading }}>  react-hooks/immutability
+  62:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-refresh/only-export-components
+
+D:\Vivitsu\4bytes\src\contexts\CartContext.tsx
+  94:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\Vivitsu\4bytes\src\contexts\LanguageContext.tsx
+  213:14  error  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  react-refresh/only-export-components
+
+D:\Vivitsu\4bytes\src\contexts\ToastContext.tsx
+  29:24  error    Error: Cannot access variable before it is declared
+
+`removeToast` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\contexts\ToastContext.tsx:29:24
+  27 |
+  28 |     if (duration > 0) {
+> 29 |       setTimeout(() => removeToast(id), duration);
+     |                        ^^^^^^^^^^^ `removeToast` accessed before it is declared
+  30 |     }
+  31 |   }, []);
+  32 |
+
+D:\Vivitsu\4bytes\src\contexts\ToastContext.tsx:33:3
+  31 |   }, []);
+  32 |
+> 33 |   const removeToast = useCallback((id: string) => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 34 |     setToasts(prev => prev.filter(t => t.id !== id));
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 35 |   }, []);
+     | ^^^^^^^^^^ `removeToast` is declared here
+  36 |
+  37 |   return (
+  38 |     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>  react-hooks/immutability
+  31:6   warning  React Hook useCallback has a missing dependency: 'removeToast'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+  45:14  error    Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react-refresh/only-export-components
+
+D:\Vivitsu\4bytes\src\db\db.ts
+  33:18  error  Unexpected any. Specify a different type                                                                                 @typescript-eslint/no-explicit-any
+  39:61  error  The `Function` type accepts any function-like value.
+Prefer explicitly defining any function parameters and return type  @typescript-eslint/no-unsafe-function-type
+
+D:\Vivitsu\4bytes\src\features\analytics\AnalyticsPage.tsx
+   6:38  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  16:5   error  Error: Cannot access variable before it is declared
+
+`loadAnalytics` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\analytics\AnalyticsPage.tsx:16:5
+  14 |
+  15 |   useEffect(() => {
+> 16 |     loadAnalytics();
+     |     ^^^^^^^^^^^^^ `loadAnalytics` accessed before it is declared
+  17 |   }, [filterDays]);
+  18 |
+  19 |   const loadAnalytics = async () => {
+
+D:\Vivitsu\4bytes\src\features\analytics\AnalyticsPage.tsx:19:3
+  17 |   }, [filterDays]);
+  18 |
+> 19 |   const loadAnalytics = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 20 |     try {
+     | ^^^^^^^^^
+> 21 |       const response = await billApi.getAll();
+     …
+     | ^^^^^^^^^
+> 45 |     }
+     | ^^^^^^^^^
+> 46 |   };
+     | ^^^^^ `loadAnalytics` is declared here
+  47 |
+  48 |   return (
+  49 |     <div className="space-y-4">  react-hooks/immutability
+  25:61  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  30:28  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  31:32  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  79:44  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  82:61  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\features\auth\AuthPage.tsx
+  44:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx
+   10:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   15:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/ban-ts-comment
+   16:13  error  'isListening' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   16:26  error  'transcript' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+   16:38  error  'isSupported' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+   16:51  error  'startListening' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+   16:67  error  'stopListening' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+   34:54  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   35:62  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   39:9   error  Error: Cannot access variable before it is declared
+
+`loadProducts` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:39:9
+  37 |
+  38 |     useEffect(() => {
+> 39 |         loadProducts();
+     |         ^^^^^^^^^^^^ `loadProducts` accessed before it is declared
+  40 |         loadCustomers();
+  41 |     }, []);
+  42 |
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:52:5
+  50 |     };
+  51 |
+> 52 |     const loadProducts = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 53 |         try {
+     | ^^^^^^^^^^^^^
+> 54 |             const response = await productApi.getAll();
+     | ^^^^^^^^^^^^^
+> 55 |             setProducts(response.data);
+     | ^^^^^^^^^^^^^
+> 56 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 57 |             console.error('Failed to load products', err);
+     | ^^^^^^^^^^^^^
+> 58 |         }
+     | ^^^^^^^^^^^^^
+> 59 |     };
+     | ^^^^^^^ `loadProducts` is declared here
+  60 |
+  61 |     const getLedgerColor = (balance: number) => {
+  62 |         if (balance <= 500) return 'text-green-600 bg-green-50 border-green-200';  react-hooks/immutability
+   40:9   error  Error: Cannot access variable before it is declared
+
+`loadCustomers` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:40:9
+  38 |     useEffect(() => {
+  39 |         loadProducts();
+> 40 |         loadCustomers();
+     |         ^^^^^^^^^^^^^ `loadCustomers` accessed before it is declared
+  41 |     }, []);
+  42 |
+  43 |     const loadCustomers = async () => {
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:43:5
+  41 |     }, []);
+  42 |
+> 43 |     const loadCustomers = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 44 |         try {
+     | ^^^^^^^^^^^^^
+> 45 |             const response = await customerApi.getAll();
+     | ^^^^^^^^^^^^^
+> 46 |             setAllCustomers(response.data);
+     | ^^^^^^^^^^^^^
+> 47 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 48 |             console.error('Failed to load customers', err);
+     | ^^^^^^^^^^^^^
+> 49 |         }
+     | ^^^^^^^^^^^^^
+> 50 |     };
+     | ^^^^^^^ `loadCustomers` is declared here
+  51 |
+  52 |     const loadProducts = async () => {
+  53 |         try {                        react-hooks/immutability
+   67:44  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  107:21  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  476:50  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:476:50
+  474 |                                     className="absolute animate-bounce text-4xl"
+  475 |                                     style={{
+> 476 |                                         left: `${Math.random() * 100}%`,
+      |                                                  ^^^^^^^^^^^^^ Cannot call impure function
+  477 |                                         top: `-10%`,
+  478 |                                         animationDuration: `${0.5 + Math.random() * 1.5}s`,
+  479 |                                         animationDelay: `${Math.random() * 2}s`,                                                                                                                                                                                                                                                           react-hooks/purity
+  478:69  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:478:69
+  476 |                                         left: `${Math.random() * 100}%`,
+  477 |                                         top: `-10%`,
+> 478 |                                         animationDuration: `${0.5 + Math.random() * 1.5}s`,
+      |                                                                     ^^^^^^^^^^^^^ Cannot call impure function
+  479 |                                         animationDelay: `${Math.random() * 2}s`,
+  480 |                                         transform: `rotate(${Math.random() * 360}deg)`
+  481 |                                     }}                                                                                                                                                                                                                                        react-hooks/purity
+  479:60  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:479:60
+  477 |                                         top: `-10%`,
+  478 |                                         animationDuration: `${0.5 + Math.random() * 1.5}s`,
+> 479 |                                         animationDelay: `${Math.random() * 2}s`,
+      |                                                            ^^^^^^^^^^^^^ Cannot call impure function
+  480 |                                         transform: `rotate(${Math.random() * 360}deg)`
+  481 |                                     }}
+  482 |                                 >                                                                                                                                                                                                                                                                                        react-hooks/purity
+  480:62  error  Error: Cannot call impure function during render
+
+`Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\billing\BillingPage.tsx:480:62
+  478 |                                         animationDuration: `${0.5 + Math.random() * 1.5}s`,
+  479 |                                         animationDelay: `${Math.random() * 2}s`,
+> 480 |                                         transform: `rotate(${Math.random() * 360}deg)`
+      |                                                              ^^^^^^^^^^^^^ Cannot call impure function
+  481 |                                     }}
+  482 |                                 >
+  483 |                                     💵                                                                                                                                                                                                                                                                                                    react-hooks/purity
+
+D:\Vivitsu\4bytes\src\features\customers\CustomerPage.tsx
+   6:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  12:5   error  Error: Cannot access variable before it is declared
+
+`loadCustomers` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\customers\CustomerPage.tsx:12:5
+  10 |
+  11 |   useEffect(() => {
+> 12 |     loadCustomers();
+     |     ^^^^^^^^^^^^^ `loadCustomers` accessed before it is declared
+  13 |   }, []);
+  14 |
+  15 |   const loadCustomers = async () => {
+
+D:\Vivitsu\4bytes\src\features\customers\CustomerPage.tsx:15:3
+  13 |   }, []);
+  14 |
+> 15 |   const loadCustomers = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 |     try {
+     | ^^^^^^^^^
+> 17 |       const response = await customerApi.getAll();
+     | ^^^^^^^^^
+> 18 |       setCustomers(response.data);
+     | ^^^^^^^^^
+> 19 |     } catch (err) {
+     | ^^^^^^^^^
+> 20 |       console.error('Failed to load customers', err);
+     | ^^^^^^^^^
+> 21 |     }
+     | ^^^^^^^^^
+> 22 |   };
+     | ^^^^^ `loadCustomers` is declared here
+  23 |
+  24 |   const getLedgerStyles = (balance: number) => {
+  25 |     if (balance <= 500) return {  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\deals\GroupBuyPage.tsx
+  10:52  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  14:56  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  17:9   error  Error: Cannot access variable before it is declared
+
+`loadDeals` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\deals\GroupBuyPage.tsx:17:9
+  15 |
+  16 |     useEffect(() => {
+> 17 |         loadDeals();
+     |         ^^^^^^^^^ `loadDeals` accessed before it is declared
+  18 |     }, []);
+  19 |
+  20 |     const loadDeals = async () => {
+
+D:\Vivitsu\4bytes\src\features\deals\GroupBuyPage.tsx:20:5
+  18 |     }, []);
+  19 |
+> 20 |     const loadDeals = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 21 |         try {
+     | ^^^^^^^^^^^^^
+> 22 |             const response = await groupBuyApi.getAll();
+     | ^^^^^^^^^^^^^
+> 23 |             setActiveDeals(response.data);
+     | ^^^^^^^^^^^^^
+> 24 |         } catch (e) {
+     | ^^^^^^^^^^^^^
+> 25 |             console.error("Failed to load deals", e);
+     | ^^^^^^^^^^^^^
+> 26 |         }
+     | ^^^^^^^^^^^^^
+> 27 |     };
+     | ^^^^^^^ `loadDeals` is declared here
+  28 |
+  29 |     const handleNewDeal = async (newDeal: any) => {
+  30 |         try {  react-hooks/immutability
+  29:43  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\features\inventory\InventoryPage.tsx
+   6:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           @typescript-eslint/no-explicit-any
+  11:9   error  Error: Cannot access variable before it is declared
+
+`loadProducts` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\inventory\InventoryPage.tsx:11:9
+   9 |
+  10 |     useEffect(() => {
+> 11 |         loadProducts();
+     |         ^^^^^^^^^^^^ `loadProducts` accessed before it is declared
+  12 |     }, []);
+  13 |
+  14 |     const loadProducts = async () => {
+
+D:\Vivitsu\4bytes\src\features\inventory\InventoryPage.tsx:14:5
+  12 |     }, []);
+  13 |
+> 14 |     const loadProducts = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |         try {
+     | ^^^^^^^^^^^^^
+> 16 |             const response = await productApi.getAll();
+     | ^^^^^^^^^^^^^
+> 17 |             setProducts(response.data);
+     | ^^^^^^^^^^^^^
+> 18 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 19 |             console.error('Failed to load products', err);
+     | ^^^^^^^^^^^^^
+> 20 |         }
+     | ^^^^^^^^^^^^^
+> 21 |     };
+     | ^^^^^^^ `loadProducts` is declared here
+  22 |
+  23 |     const handleAddProduct = async () => {
+  24 |         if (!newProduct.name || !newProduct.price) return;  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\khata\KhataPage.tsx
+   6:48  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  11:9   error  Error: Cannot access variable before it is declared
+
+`loadCustomers` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\khata\KhataPage.tsx:11:9
+   9 |
+  10 |     useEffect(() => {
+> 11 |         loadCustomers();
+     |         ^^^^^^^^^^^^^ `loadCustomers` accessed before it is declared
+  12 |     }, []);
+  13 |
+  14 |     const loadCustomers = async () => {
+
+D:\Vivitsu\4bytes\src\features\khata\KhataPage.tsx:14:5
+  12 |     }, []);
+  13 |
+> 14 |     const loadCustomers = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 15 |         try {
+     | ^^^^^^^^^^^^^
+> 16 |             const response = await customerApi.getAll();
+     | ^^^^^^^^^^^^^
+> 17 |             setCustomers(response.data);
+     | ^^^^^^^^^^^^^
+> 18 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 19 |             console.error('Failed to load customers', err);
+     | ^^^^^^^^^^^^^
+> 20 |         }
+     | ^^^^^^^^^^^^^
+> 21 |     };
+     | ^^^^^^^ `loadCustomers` is declared here
+  22 |
+  23 |     const handleAddCustomer = async () => {
+  24 |         if (!newCustomer.name || !newCustomer.phoneNumber) return;  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\ledger\LedgerPage.tsx
+   6:40  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  10:9   error  Error: Cannot access variable before it is declared
+
+`loadBills` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\ledger\LedgerPage.tsx:10:9
+   8 |
+   9 |     useEffect(() => {
+> 10 |         loadBills();
+     |         ^^^^^^^^^ `loadBills` accessed before it is declared
+  11 |     }, []);
+  12 |
+  13 |     const loadBills = async () => {
+
+D:\Vivitsu\4bytes\src\features\ledger\LedgerPage.tsx:13:5
+  11 |     }, []);
+  12 |
+> 13 |     const loadBills = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 14 |         try {
+     | ^^^^^^^^^^^^^
+> 15 |             const response = await billApi.getAll();
+     | ^^^^^^^^^^^^^
+> 16 |             setBills(response.data);
+     | ^^^^^^^^^^^^^
+> 17 |         } catch (err) {
+     | ^^^^^^^^^^^^^
+> 18 |             console.error('Failed to load bills', err);
+     | ^^^^^^^^^^^^^
+> 19 |         }
+     | ^^^^^^^^^^^^^
+> 20 |     };
+     | ^^^^^^^ `loadBills` is declared here
+  21 |
+  22 |     const filteredEntries = filterMode === 'ALL'
+  23 |         ? bills  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\payments\PaymentPage.tsx
+   6:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @typescript-eslint/no-explicit-any
+  12:5   error  Error: Cannot access variable before it is declared
+
+`loadData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\payments\PaymentPage.tsx:12:5
+  10 |
+  11 |   useEffect(() => {
+> 12 |     loadData();
+     |     ^^^^^^^^ `loadData` accessed before it is declared
+  13 |   }, []);
+  14 |
+  15 |   const loadData = async () => {
+
+D:\Vivitsu\4bytes\src\features\payments\PaymentPage.tsx:15:3
+  13 |   }, []);
+  14 |
+> 15 |   const loadData = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 16 |     try {
+     | ^^^^^^^^^
+> 17 |       const response = await customerApi.getAll();
+     | ^^^^^^^^^
+> 18 |       setCustomers(response.data);
+     | ^^^^^^^^^
+> 19 |     } catch (err) {
+     | ^^^^^^^^^
+> 20 |       console.error('Failed to load data', err);
+     | ^^^^^^^^^
+> 21 |     }
+     | ^^^^^^^^^
+> 22 |   };
+     | ^^^^^ `loadData` is declared here
+  23 |
+  24 |   const handleAddPayment = async () => {
+  25 |     if (!selectedCustomerId || paymentAmount <= 0) {  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\products\ProductPage.tsx
+  26:5  error  Error: Cannot access variable before it is declared
+
+`loadProducts` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+D:\Vivitsu\4bytes\src\features\products\ProductPage.tsx:26:5
+  24 |
+  25 |   useEffect(() => {
+> 26 |     loadProducts();
+     |     ^^^^^^^^^^^^ `loadProducts` accessed before it is declared
+  27 |   }, []);
+  28 |
+  29 |   const loadProducts = async () => {
+
+D:\Vivitsu\4bytes\src\features\products\ProductPage.tsx:29:3
+  27 |   }, []);
+  28 |
+> 29 |   const loadProducts = async () => {
+     |   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 30 |     try {
+     | ^^^^^^^^^
+> 31 |       const response = await productApi.getAll();
+     | ^^^^^^^^^
+> 32 |       setProducts(response.data);
+     | ^^^^^^^^^
+> 33 |     } catch (err) {
+     | ^^^^^^^^^
+> 34 |       console.error('Failed to load products', err);
+     | ^^^^^^^^^
+> 35 |     }
+     | ^^^^^^^^^
+> 36 |   };
+     | ^^^^^ `loadProducts` is declared here
+  37 |
+  38 |   const handleSave = async () => {
+  39 |     if (!formData.name || formData.price <= 0 || formData.stock < 0) {  react-hooks/immutability
+
+D:\Vivitsu\4bytes\src\features\recovery\RecoveryPage.tsx
+  11:40  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  16:50  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+  23:86  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\recovery\RecoveryPage.tsx:23:86
+  21 |     const actionQueue = allCustomers?.filter(customer => {
+  22 |         const hasBalance = customer.khataBalance > 0;
+> 23 |         const isPastPromiseDate = !customer.nextCallDate || customer.nextCallDate <= Date.now();
+     |                                                                                      ^^^^^^^^^^ Cannot call impure function
+  24 |         return hasBalance && isPastPromiseDate;
+  25 |     }) || [];
+  26 |                                                                                                             react-hooks/purity
+  30:86  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\recovery\RecoveryPage.tsx:30:86
+  28 |     const scheduledQueue = allCustomers?.filter(customer => {
+  29 |         const hasBalance = customer.khataBalance > 0;
+> 30 |         const isFuturePromiseDate = customer.nextCallDate && customer.nextCallDate > Date.now();
+     |                                                                                      ^^^^^^^^^^ Cannot call impure function
+  31 |         return hasBalance && isFuturePromiseDate;
+  32 |     }) || [];
+  33 |                                                                                                        react-hooks/purity
+  35:41  error  Error: Cannot call impure function during render
+
+`Date.now` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+
+D:\Vivitsu\4bytes\src\features\recovery\RecoveryPage.tsx:35:41
+  33 |
+  34 |     const displayCustomers = (viewMode === 'ACTION' ? actionQueue : scheduledQueue).map(customer => {
+> 35 |         const daysOverdue = Math.floor((Date.now() - customer.createdAt) / (1000 * 60 * 60 * 24));
+     |                                         ^^^^^^^^^^ Cannot call impure function
+  36 |         let risk: 'LOW' | 'MEDIUM' | 'HIGH';
+  37 |         if (customer.trustScore >= 80 && customer.khataBalance < 1000) risk = 'LOW';
+  38 |         else if (customer.trustScore >= 50 || customer.khataBalance < 2000) risk = 'MEDIUM';  react-hooks/purity
+  53:39  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\hooks\useSpeechRecognition.ts
+   5:30  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+   6:24  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  21:33  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  24:42  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  24:85  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  27:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Vivitsu\4bytes\src\hooks\useSpeechRecognition.ts:27:7
+  25 |
+  26 |     if (SpeechRecognition) {
+> 27 |       setIsSupported(true);
+     |       ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  28 |       recognitionRef.current = new SpeechRecognition();
+  29 |
+  30 |       recognitionRef.current.continuous = false;  react-hooks/set-state-in-effect
+  39:49  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+  49:13  error  'interimTranscript' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+  54:48  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\lib\firebase.ts
+  21:9  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\services\api.ts
+  19:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  20:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  27:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  50:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Vivitsu\4bytes\src\types.d.ts
+  5:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  6:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 138 problems (136 errors, 2 warnings)
+

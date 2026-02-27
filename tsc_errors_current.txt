@@ -1,0 +1,10 @@
+src/components/layout/MainLayout.tsx(43,58): error TS2304: Cannot find name 'Phone'.
+src/features/recovery/RecoveryPage.tsx(21,46): error TS7006: Parameter 'customer' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(28,49): error TS7006: Parameter 'customer' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(34,89): error TS7006: Parameter 'customer' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(59,48): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(59,88): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(59,93): error TS7006: Parameter 'd' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(60,46): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(142,46): error TS7006: Parameter 'customer' implicitly has an 'any' type.
+src/features/recovery/RecoveryPage.tsx(177,44): error TS7006: Parameter 'c' implicitly has an 'any' type.

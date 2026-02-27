@@ -1,0 +1,31 @@
+src/components/GroupBuyCard.tsx(1,20): error TS6133: 'useEffect' is declared but its value is never read.
+src/components/GroupBuyCard.tsx(3,1): error TS6192: All imports in import declaration are unused.
+src/components/GroupBuyCard.tsx(8,20): error TS6133: 'setPledge' is declared but its value is never read.
+src/components/GroupBuyCard.tsx(23,11): error TS6133: 'savings' is declared but its value is never read.
+src/components/layout/MainLayout.tsx(14,13): error TS6133: 'language' is declared but its value is never read.
+src/components/layout/MainLayout.tsx(14,26): error TS6133: 'toggleLanguage' is declared but its value is never read.
+src/components/layout/MainLayout.tsx(43,58): error TS2304: Cannot find name 'Phone'.
+src/features/analytics/AnalyticsPage.tsx(2,22): error TS6133: 'User' is declared but its value is never read.
+src/features/billing/BillingPage.tsx(7,10): error TS6133: 'IndianRupee' is declared but its value is never read.
+src/features/billing/BillingPage.tsx(7,34): error TS6133: 'Mic' is declared but its value is never read.
+src/features/billing/BillingPage.tsx(7,39): error TS6133: 'MicOff' is declared but its value is never read.
+src/features/billing/BillingPage.tsx(73,19): error TS6133: 'response' is declared but its value is never read.
+src/features/billing/BillingPage.tsx(75,54): error TS2339: Property '_id' does not exist on type 'CartItem'.
+src/features/billing/BillingPage.tsx(206,52): error TS2339: Property '_id' does not exist on type 'CartItem'.
+src/features/billing/BillingPage.tsx(216,94): error TS2339: Property '_id' does not exist on type 'CartItem'.
+src/features/billing/BillingPage.tsx(218,94): error TS2339: Property '_id' does not exist on type 'CartItem'.
+src/features/billing/BillingPage.tsx(220,90): error TS2339: Property '_id' does not exist on type 'CartItem'.
+src/features/customers/CustomerPage.tsx(2,69): error TS6133: 'ChevronRight' is declared but its value is never read.
+src/features/customers/CustomerPage.tsx(9,10): error TS6133: 'editingId' is declared but its value is never read.
+src/features/deals/GroupBuyPage.tsx(2,1): error TS6133: 'motion' is declared but its value is never read.
+src/features/deals/GroupBuyPage.tsx(3,23): error TS6133: 'Sparkles' is declared but its value is never read.
+src/features/deals/GroupBuyPage.tsx(3,33): error TS6133: 'Truck' is declared but its value is never read.
+src/features/deals/GroupBuyPage.tsx(9,1): error TS6133: 'MY_ORDERS' is declared but its value is never read.
+src/features/inventory/InventoryPage.tsx(3,19): error TS6133: 'Mic' is declared but its value is never read.
+src/features/khata/KhataPage.tsx(3,38): error TS6133: 'TrendingUp' is declared but its value is never read.
+src/features/khata/KhataPage.tsx(3,50): error TS6133: 'AlertTriangle' is declared but its value is never read.
+src/features/khata/KhataPage.tsx(35,11): error TS6133: 'getTrustColor' is declared but its value is never read.
+src/features/ledger/LedgerPage.tsx(3,10): error TS6133: 'Receipt' is declared but its value is never read.
+src/features/ledger/LedgerPage.tsx(3,35): error TS6133: 'Phone' is declared but its value is never read.
+src/features/ledger/LedgerPage.tsx(3,42): error TS6133: 'Tag' is declared but its value is never read.
+src/features/payments/PaymentPage.tsx(2,29): error TS6133: 'CheckCircle' is declared but its value is never read.
