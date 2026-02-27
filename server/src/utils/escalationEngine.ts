@@ -6,36 +6,44 @@ export interface EscalationResult {
     tone: string;
 }
 
+const DEMO_MODE = process.env.DEMO_MODE === 'true';
+
+// In DEMO MODE, the entire escalation plays out in ~2 minutes using SECONDS as the time unit
+// In PRODUCTION, it uses DAYS (1, 3, 7, 14 days)
+const THRESHOLDS = DEMO_MODE
+    ? { L1: 0, L2: 1, L3: 2, L4: 3 }       // 0s, 1min, 2min, 3min
+    : { L1: 1, L2: 3, L3: 7, L4: 14 };      // 1d, 3d, 7d, 14d
+
 export function evaluateEscalation(invoice: IInvoice): EscalationResult {
     const now = new Date();
     const dueDate = new Date(invoice.due_date);
 
-    // Default: no action
     const defaultResult: EscalationResult = { shouldRemind: false, level: invoice.reminder_level, tone: '' };
 
-    if (now <= dueDate || invoice.status === 'paid') {
+    // Don't remind if not overdue, paid, disputed, or promised
+    if (now <= dueDate || ['paid', 'disputed', 'promised'].includes(invoice.status)) {
         return defaultResult;
     }
 
     const timeDifferenceMs = now.getTime() - dueDate.getTime();
 
-    // For hackathon demo purposes
-    let timeUnitOverdue = timeDifferenceMs / (1000 * 60 * 60 * 24); // days
-    if (process.env.DEMO_MODE === 'true') {
-        timeUnitOverdue = timeDifferenceMs / (1000 * 60); // minutes for fast testing
-    }
+    // DEMO: use MINUTES as unit (so Level 1 triggers instantly, Level 3 in ~2 min)
+    // PROD: use DAYS as unit
+    const timeUnit = DEMO_MODE
+        ? timeDifferenceMs / (1000 * 60)       // minutes
+        : timeDifferenceMs / (1000 * 60 * 60 * 24); // days
 
     // Process from most severe to least severe
-    if (timeUnitOverdue >= 14 && invoice.reminder_level < 4) {
+    if (timeUnit >= THRESHOLDS.L4 && invoice.reminder_level < 4) {
         return { shouldRemind: true, level: 4, tone: 'final notice' };
     }
-    if (timeUnitOverdue >= 7 && invoice.reminder_level < 3) {
+    if (timeUnit >= THRESHOLDS.L3 && invoice.reminder_level < 3) {
         return { shouldRemind: true, level: 3, tone: 'urgent reminder' };
     }
-    if (timeUnitOverdue >= 3 && invoice.reminder_level < 2) {
+    if (timeUnit >= THRESHOLDS.L2 && invoice.reminder_level < 2) {
         return { shouldRemind: true, level: 2, tone: 'polite follow-up' };
     }
-    if (timeUnitOverdue >= 1 && invoice.reminder_level < 1) {
+    if (timeUnit >= THRESHOLDS.L1 && invoice.reminder_level < 1) {
         return { shouldRemind: true, level: 1, tone: 'friendly reminder' };
     }
 

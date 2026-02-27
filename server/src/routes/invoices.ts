@@ -28,7 +28,11 @@ invoiceRouter.post('/import-khata', auth, async (req, res) => {
 
         let importedCount = 0;
         const pastDate = new Date();
-        pastDate.setDate(pastDate.getDate() - 15); // Force it instantly overdue for demo/auto-pilot fast pickup
+        if (process.env.DEMO_MODE === 'true') {
+            pastDate.setMinutes(pastDate.getMinutes() - 5); // 5 minutes ago — triggers all demo thresholds instantly
+        } else {
+            pastDate.setDate(pastDate.getDate() - 15); // 15 days ago for production
+        }
 
         for (const account of overdueAccounts) {
             const customer = account.customerId as any;
