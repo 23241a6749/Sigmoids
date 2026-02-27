@@ -1,7 +1,9 @@
 import OpenAI from 'openai';
 
+const isOR = (process.env.OPENAI_API_KEY || '').startsWith('sk-or');
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || 'dummy_key_for_build',
+    ...(isOR ? { baseURL: "https://openrouter.ai/api/v1" } : {})
 });
 
 export type Intent = 'PAYMENT_PROMISED' | 'EXTENSION_REQUESTED' | 'DISPUTE' | 'UNKNOWN';
@@ -24,7 +26,7 @@ export async function classifyIntent(messageBody: string): Promise<Intent> {
     try {
         if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'dummy_key_for_build') {
             const response = await openai.chat.completions.create({
-                model: 'gpt-3.5-turbo',
+                model: isOR ? 'openai/gpt-3.5-turbo' : 'gpt-3.5-turbo',
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: messageBody }

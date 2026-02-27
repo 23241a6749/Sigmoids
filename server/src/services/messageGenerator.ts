@@ -3,8 +3,10 @@ import { IInvoice } from '../models/Invoice.js';
 
 // Setup OpenAI client. In hackathon mode with missing keys, it may throw if invoked without one,
 // so ensure process.env.OPENAI_API_KEY is available or gracefully handled.
+const isOR = (process.env.OPENAI_API_KEY || '').startsWith('sk-or');
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || 'dummy_key_for_build',
+    ...(isOR ? { baseURL: "https://openrouter.ai/api/v1" } : {})
 });
 
 export async function generateMessage(invoice: IInvoice, tone: string, channel: string): Promise<string> {
@@ -30,7 +32,7 @@ export async function generateMessage(invoice: IInvoice, tone: string, channel: 
     try {
         if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'dummy_key_for_build') {
             const response = await openai.chat.completions.create({
-                model: 'gpt-3.5-turbo',
+                model: isOR ? 'openai/gpt-3.5-turbo' : 'gpt-3.5-turbo',
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: `Draft the ${channel} message now.` }

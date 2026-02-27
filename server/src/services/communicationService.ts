@@ -23,10 +23,17 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
                 console.log(`[Mock WhatsApp] to ${invoice.client_phone}: ${message}`);
                 return 'simulated_delivered';
             }
+            const fromNum = process.env.TWILIO_PHONE_NUMBER?.startsWith('whatsapp:')
+                ? process.env.TWILIO_PHONE_NUMBER
+                : `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`;
+            const toNum = invoice.client_phone.startsWith('whatsapp:')
+                ? invoice.client_phone
+                : `whatsapp:${invoice.client_phone}`;
+
             await twilioClient.messages.create({
                 body: message,
-                from: `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`,
-                to: `whatsapp:${invoice.client_phone}`
+                from: fromNum,
+                to: toNum
             });
             return 'delivered';
 
@@ -35,10 +42,13 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
                 console.log(`[Mock SMS] to ${invoice.client_phone}: ${message}`);
                 return 'simulated_delivered';
             }
+            const fromNumSms = process.env.TWILIO_PHONE_NUMBER?.replace('whatsapp:', '') || '';
+            const toNumSms = invoice.client_phone.replace('whatsapp:', '');
+
             await twilioClient.messages.create({
                 body: message,
-                from: process.env.TWILIO_PHONE_NUMBER,
-                to: invoice.client_phone
+                from: fromNumSms,
+                to: toNumSms
             });
             return 'delivered';
 
