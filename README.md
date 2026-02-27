@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://img.shields.io/badge/KiranaLink-AI%20Powered-orange?style=for-the-badge" alt="KiranaLink Logo" />
-  <h1>KiranaLink: The AI Super-App for Local Retail 🏪</h1>
+  <img src="https://img.shields.io/badge/KLink-AI%20Powered-orange?style=for-the-badge" alt="KLink Logo" />
+  <h1>KLink: The AI Super-App for Local Retail 🏪</h1>
   <p>Empowering local Kirana store owners with AI Agentic Workflows, automated debt recovery, and smart inventory management.</p>
 </div>
 
@@ -8,12 +8,12 @@
 
 ## 🚀 Overview
 
-**KiranaLink** is an all-in-one smart management platform built to modernize traditional "Kirana" (local grocery) stores in India. We tackle the biggest pain points of small retailers—such as manual ledger management, pending dues (Khata), and unorganized inventory—by injecting powerful **Gen-AI and Agentic workflows** into their daily operations.
+**KLink** is an all-in-one smart management platform built to modernize traditional "Kirana" (local grocery) stores in India. We tackle the biggest pain points of small retailers—such as manual ledger management, pending dues (Khata), and unorganized inventory—by injecting powerful **Gen-AI and Agentic workflows** into their daily operations.
 
 ## ✨ Unique Features
 
 ### 🎙️ 1. AI Voice Auto-Pilot (Smart Debt Recovery)
-The crown jewel of KiranaLink. Recovering pending dues (Khata) is socially awkward and time-consuming for shopkeepers.
+The crown jewel of KLink. Recovering pending dues (Khata) is socially awkward and time-consuming for shopkeepers.
 - **Autonomous AI Agent:** Sync overdue Khatas with one click. The AI agent automatically orchestrates a multi-tier recovery pipeline.
 - **Smart WhatsApp Reminders:** Sends polite, localized reminders with deep-linked UPI payments.
 - **Live AI Phone Calls:** If dues remain unpaid, our GPT-4o-mini powered voice agent actually **calls the customer**. It engages in a multi-turn, natural conversation, negotiates extensions, records payment promises, and handles disputes—just like a real Indian shopkeeper.
@@ -30,7 +30,7 @@ The crown jewel of KiranaLink. Recovering pending dues (Khata) is socially awkwa
 - **Quick Billing:** Add items to cart and generate instant PDF receipts for customers with easy share options.
 
 ### 💬 4. WhatsApp Business Bot
-- Customers can interact with the Kirana store directly via a WhatsApp chat interface.
+- Customers can interact with the store directly via a WhatsApp chat interface.
 - Includes AI-powered language detection, allowing customers to send voice notes or text in their native language to check their dues or ask questions.
 
 ---
@@ -63,7 +63,7 @@ The crown jewel of KiranaLink. Recovering pending dues (Khata) is socially awkwa
 1. **Clone the repository:**
    ```bash
    git clone <repo-url>
-   cd KiranaLink
+   cd KLink
    ```
 
 2. **Install dependencies:**
