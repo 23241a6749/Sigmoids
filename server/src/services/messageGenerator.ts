@@ -21,7 +21,9 @@ export async function generateMessage(invoice: IInvoice, tone: string, channel: 
     Always include this payment link: ${paymentLink}
     `;
 
-    if (channel === 'sms') {
+    if (channel === 'call') {
+        systemPrompt += `\nConstraint: This is the OPENING LINE of a live phone call. You are a local shopkeeper calling your customer. You must start the conversation natively like "Hello ji, this is KiranaLink shop, calling for [name]..." Keep it VERY short (1-2 sentences) and end with a question like "When are you planning to pay the ₹[amount]?" Do NOT include URLs or emojis.`;
+    } else if (channel === 'sms') {
         systemPrompt += `\nConstraint: Keep the message under 160 characters. Be extremely brief.`;
     } else if (channel === 'whatsapp') {
         systemPrompt += `\nConstraint: Format nicely suitable for WhatsApp. You can use mild emojis.`;

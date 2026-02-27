@@ -19,7 +19,7 @@ export function startInvoiceScheduler() {
                     console.log(`[Invoice Scheduler] Triggering ${escalation.tone} for client ${invoice.client_name} (Level ${escalation.level})`);
 
                     // Generate AI text and send notification
-                    const channel = invoice.client_phone ? 'whatsapp' : 'email';
+                    const channel = invoice.client_phone ? 'call' : 'email';
                     const generatedMessage = await generateMessage(invoice, escalation.tone, channel);
 
                     console.log(`[Invoice Scheduler] Sending: "${generatedMessage}" via ${channel}`);

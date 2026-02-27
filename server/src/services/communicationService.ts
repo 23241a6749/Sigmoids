@@ -52,6 +52,23 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
             });
             return 'delivered';
 
+        } else if (channel === 'call') {
+            if (!twilioAvailable || !twilioClient) {
+                console.log(`[Mock Call] to ${invoice.client_phone}: ${message}`);
+                return 'simulated_delivered';
+            }
+            const fromNumCall = process.env.TWILIO_PHONE_NUMBER?.replace('whatsapp:', '') || '';
+            const toNumCall = invoice.client_phone.replace('whatsapp:', '');
+
+            const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
+
+            await twilioClient.calls.create({
+                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="4" speechTimeout="auto" language="en-IN"><Say voice="alice" language="en-IN">${message}</Say></Gather></Response>`,
+                to: toNumCall,
+                from: fromNumCall
+            });
+            return 'delivered';
+
         } else if (channel === 'email') {
             // For email, we expect the LLM might have put 'Subject: ...' at the start
             let subject = `Invoice Reminder: KiranaLink`;

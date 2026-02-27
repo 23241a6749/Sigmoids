@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { Invoice } from '../models/Invoice.js';
 import { classifyIntent } from '../services/intentClassifier.js';
+import OpenAI from 'openai';
 
 export const invoiceWebhooksRouter = Router();
 
@@ -61,5 +62,85 @@ invoiceWebhooksRouter.post('/reply', async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Invoice Webhook Processing Error:', error);
         res.status(500).send('Server Error');
+    }
+});
+
+// Twilio Voice Webhook for real-time conversation via <Gather>
+invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
+    res.type('text/xml');
+    try {
+        const { To, From, SpeechResult } = req.body;
+        // The From number during an active call is the customer, but we can also check To
+        let targetPhone = From;
+        if (From === process.env.TWILIO_PHONE_NUMBER?.replace('whatsapp:', '')) {
+            targetPhone = To; // If Twilio is 'From' (sometimes flip-flops on outbound webhooks)
+        }
+
+        const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
+        const buildTwiml = (text: string) => `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="3" speechTimeout="auto" language="en-IN"><Say voice="alice" language="en-IN">${text}</Say></Gather></Response>`;
+
+        // If they didn't say anything or missed it
+        if (!SpeechResult) {
+            return res.send(buildTwiml("I didn't hear that. Are you there?"));
+        }
+
+        const isOR = (process.env.OPENAI_API_KEY || '').startsWith('sk-or');
+        const openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY || 'dummy_key',
+            ...(isOR ? { baseURL: "https://openrouter.ai/api/v1" } : {})
+        });
+
+        let cleanPhone = targetPhone.replace('whatsapp:', '').replace('+', '\\+');
+        // Find invoice
+        const invoice = await Invoice.findOne({
+            client_phone: { $regex: new RegExp(targetPhone.replace('+', '\\+').slice(-10) + '$') },
+            status: { $in: ['unpaid', 'overdue'] }
+        });
+
+        if (!invoice) {
+            return res.send(`<Response><Say voice="alice" language="en-IN">Thank you. Goodbye.</Say><Hangup/></Response>`);
+        }
+
+        const systemPrompt = `You are a Kirana store (local shop) owner in India talking on the phone with your customer (${invoice.client_name}) to collect a pending balance of ₹${invoice.amount}. 
+        Be polite but firm. Talk like a real human shopkeeper. Very short conversational sentences. 
+        If they promise to pay, say "Okay, please pay soon. Thank you bye." and include the exact word "END_CALL".
+        Current date: ${new Date().toDateString()}. Due date was ${invoice.due_date.toDateString()}.`;
+
+        const response = await openai.chat.completions.create({
+            model: isOR ? 'openai/gpt-3.5-turbo' : 'gpt-3.5-turbo',
+            messages: [
+                { role: 'system', content: systemPrompt },
+                { role: 'user', content: SpeechResult }
+            ],
+            max_tokens: 60,
+            temperature: 0.6,
+        });
+
+        let aiReply = response.choices[0].message?.content || 'Okay, please pay soon. END_CALL';
+
+        const shouldEnd = aiReply.includes('END_CALL');
+        aiReply = aiReply.replace('END_CALL', '').trim();
+
+        invoice.reminder_history.push({
+            timestamp: new Date(),
+            channel: 'voice_call',
+            message_content: `[User]: ${SpeechResult} | [Shopkeeper]: ${aiReply}`,
+            delivery_status: 'delivered'
+        });
+
+        if (shouldEnd) {
+            invoice.status = 'paid'; // Stop loop
+        }
+        await invoice.save();
+
+        if (shouldEnd) {
+            return res.send(`<Response><Say voice="alice" language="en-IN">${aiReply}</Say><Hangup/></Response>`);
+        } else {
+            return res.send(buildTwiml(aiReply));
+        }
+
+    } catch (e) {
+        console.error('Voice Webhook Error', e);
+        return res.send(`<Response><Say voice="alice">Sorry, connection issue. Goodbye.</Say><Hangup/></Response>`);
     }
 });

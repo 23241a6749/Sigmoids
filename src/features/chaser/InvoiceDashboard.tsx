@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { invoiceApi } from '../../services/api';
 import {
     CheckCircle, Clock, Zap, AlertTriangle,
-    Send, RefreshCw, Smartphone, Mail
+    Send, RefreshCw, Smartphone, Mail, Phone
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -66,10 +66,10 @@ export default function InvoiceDashboard() {
             past20Days.setDate(past20Days.getDate() - 20);
 
             const fakeInvoice = {
-                invoice_id: `DEMO-${Math.floor(Math.random() * 10000)}`,
+                invoice_id: `DEMO - ${Math.floor(Math.random() * 10000)} `,
                 client_name: 'Hackathon Judge',
                 client_email: 'judge@example.com',
-                client_phone: '+919876543210', // Provide your active WhatsApp sandbox Number here
+                client_phone: '+918712316204', // Provide your active WhatsApp sandbox Number here
                 amount: Math.floor(Math.random() * 5000) + 1000,
                 due_date: past20Days.toISOString()
             };
@@ -114,9 +114,9 @@ export default function InvoiceDashboard() {
                     { title: 'Total Invoices', val: totalInvoices, icon: <Clock className="h-6 w-6 text-blue-500" />, color: 'bg-blue-50 border-blue-100' },
                     { title: 'Active Recoveries', val: activeRecoveries, icon: <AlertTriangle className="h-6 w-6 text-orange-500" />, color: 'bg-orange-50 border-orange-100' },
                     { title: 'Recovered (Paid)', val: recoveredInvoices, icon: <CheckCircle className="h-6 w-6 text-green-500" />, color: 'bg-green-50 border-green-100' },
-                    { title: 'Amount Recovered', val: `₹${totalAmountRecovered}`, icon: <Zap className="h-6 w-6 text-purple-500" />, color: 'bg-purple-50 border-purple-100' },
+                    { title: 'Amount Recovered', val: `₹${totalAmountRecovered} `, icon: <Zap className="h-6 w-6 text-purple-500" />, color: 'bg-purple-50 border-purple-100' },
                 ].map((card, idx) => (
-                    <div key={idx} className={`p-6 rounded-xl border ${card.color} shadow-sm backdrop-blur-sm`}>
+                    <div key={idx} className={`p - 6 rounded - xl border ${card.color} shadow - sm backdrop - blur - sm`}>
                         <div className="flex justify-between items-start">
                             <div>
                                 <p className="text-sm font-semibold text-gray-600 mb-1">{card.title}</p>
@@ -164,27 +164,31 @@ export default function InvoiceDashboard() {
                                             </td>
                                             <td className="px-6 py-4 font-medium">₹{inv.amount}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold
+                                                <span className={`px - 2.5 py - 1 rounded - full text - xs font - semibold
                           ${inv.status === 'paid' ? 'bg-green-100 text-green-700' :
                                                         inv.status === 'overdue' ? 'bg-orange-100 text-orange-700' :
-                                                            'bg-gray-100 text-gray-700'}`}>
+                                                            'bg-gray-100 text-gray-700'
+                                                    } `}>
                                                     {inv.status.toUpperCase()}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center justify-center gap-1">
                                                     {[1, 2, 3, 4].map((level) => (
-                                                        <div key={level} className={`h-2 w-6 rounded-full ${inv.reminder_level >= level ?
-                                                            (level > 2 ? 'bg-red-500' : 'bg-orange-400') : 'bg-gray-200'}`}
+                                                        <div key={level} className={`h - 2 w - 6 rounded - full ${inv.reminder_level >= level ?
+                                                                (level > 2 ? 'bg-red-500' : 'bg-orange-400') : 'bg-gray-200'
+                                                            } `}
                                                         />
                                                     ))}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-4 flex justify-center gap-2">
                                                 {inv.reminder_history.length > 0 ? (
-                                                    inv.reminder_history[inv.reminder_history.length - 1].channel === 'whatsapp' ?
-                                                        <span title="WhatsApp"><Smartphone className="text-green-500 h-5 w-5" /></span> :
-                                                        <span title="Email"><Mail className="text-blue-500 h-5 w-5" /></span>
+                                                    inv.reminder_history[inv.reminder_history.length - 1].channel === 'call' ?
+                                                        <span title="Voice Call"><Phone className="text-red-500 h-5 w-5" /></span> :
+                                                        inv.reminder_history[inv.reminder_history.length - 1].channel === 'sms' ?
+                                                            <span title="SMS"><Smartphone className="text-green-500 h-5 w-5" /></span> :
+                                                            <span title="Email"><Mail className="text-blue-500 h-5 w-5" /></span>
                                                 ) : (
                                                     <span className="text-gray-300">-</span>
                                                 )}
