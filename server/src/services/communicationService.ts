@@ -63,7 +63,7 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
             const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
 
             await twilioClient.calls.create({
-                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="4" speechTimeout="auto" language="en-IN"><Say voice="alice" language="en-IN">${message}</Say></Gather></Response>`,
+                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="5" speechTimeout="auto" language="en-IN" enhanced="true" speechModel="phone_call" profanityFilter="false" hints="pay, tomorrow, Friday, today, next week, wait, cash, UPI, salary, later, done, sent, clear"><Say voice="alice" language="en-IN">${message}</Say></Gather></Response>`,
                 to: toNumCall,
                 from: fromNumCall
             });

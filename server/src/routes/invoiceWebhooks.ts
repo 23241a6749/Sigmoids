@@ -77,7 +77,7 @@ invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
         }
 
         const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
-        const buildTwiml = (text: string) => `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="3" speechTimeout="auto" language="en-IN"><Say voice="alice" language="en-IN">${text}</Say></Gather></Response>`;
+        const buildTwiml = (text: string) => `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="4" speechTimeout="auto" language="en-IN" enhanced="true" speechModel="phone_call" profanityFilter="false" hints="pay, tomorrow, Friday, today, next week, wait, cash, UPI, salary, later, done, sent, clear"><Say voice="alice" language="en-IN">${text}</Say></Gather></Response>`;
 
         // If they didn't say anything or missed it
         if (!SpeechResult) {
@@ -107,7 +107,7 @@ invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
         Current date: ${new Date().toDateString()}. Due date was ${invoice.due_date.toDateString()}.`;
 
         const response = await openai.chat.completions.create({
-            model: isOR ? 'openai/gpt-3.5-turbo' : 'gpt-3.5-turbo',
+            model: isOR ? 'openai/gpt-4o-mini' : 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: SpeechResult }
@@ -120,6 +120,15 @@ invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
 
         const shouldEnd = aiReply.includes('END_CALL');
         aiReply = aiReply.replace('END_CALL', '').trim();
+
+        // Sanitize for strict Twilio XML Parsing to avoid "Application Error"
+        const safeAiReply = aiReply
+            .replace(/&/g, ' and ')
+            .replace(/</g, '')
+            .replace(/>/g, '')
+            .replace(/₹/g, 'rupees ')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;');
 
         invoice.reminder_history.push({
             timestamp: new Date(),
@@ -134,9 +143,9 @@ invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
         await invoice.save();
 
         if (shouldEnd) {
-            return res.send(`<Response><Say voice="alice" language="en-IN">${aiReply}</Say><Hangup/></Response>`);
+            return res.send(`<Response><Say voice="alice" language="en-IN">${safeAiReply}</Say><Hangup/></Response>`);
         } else {
-            return res.send(buildTwiml(aiReply));
+            return res.send(buildTwiml(safeAiReply));
         }
 
     } catch (e) {

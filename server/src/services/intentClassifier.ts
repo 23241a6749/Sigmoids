@@ -26,7 +26,7 @@ export async function classifyIntent(messageBody: string): Promise<Intent> {
     try {
         if (process.env.OPENAI_API_KEY && process.env.OPENAI_API_KEY !== 'dummy_key_for_build') {
             const response = await openai.chat.completions.create({
-                model: isOR ? 'openai/gpt-3.5-turbo' : 'gpt-3.5-turbo',
+                model: isOR ? 'openai/gpt-4o-mini' : 'gpt-4o-mini',
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: messageBody }
