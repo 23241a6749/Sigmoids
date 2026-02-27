@@ -28,7 +28,7 @@
 **Requirements**: REQ-04, REQ-05
 
 ### Phase 4: Conversation & Intent Handler
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Intercept webhook replies from customers. Use an LLM to evaluate if the customer is promising payment, disputing the amount, or asking for time, and update the invoice state accordingly.
 **Requirements**: REQ-07
 
