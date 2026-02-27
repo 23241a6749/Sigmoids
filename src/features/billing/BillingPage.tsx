@@ -255,15 +255,106 @@ export const BillingPage: React.FC = () => {
     };
 
     const handleUpiPayment = async () => {
-        setAnimationType('online');
-        setShowStatusModal(true);
-        setIsProcessing(true);
+        if (!selectedCustomer) return;
 
-        const success = await processTransaction('online');
-        if (success) {
+        setIsProcessing(true);
+        setAnimationType('online');
+
+        try {
+            // ── Step 1: Create order on the server ──────────────────────────
+            const amountInPaise = cartTotal * 100; // Razorpay expects paise
+            const orderRes = await billApi.createRazorpayOrder(amountInPaise);
+            const { orderId, amount, currency, keyId } = orderRes.data;
+
+            // ── Step 2: Open Razorpay Checkout popup ─────────────────────────
+            await new Promise<void>((resolve, reject) => {
+                const options = {
+                    key: keyId,          // rzp_test_... from server
+                    amount,              // in paise
+                    currency,
+                    name: 'KLink Store',
+                    description: `Bill for ${selectedCustomer.name || selectedCustomer.phoneNumber}`,
+                    order_id: orderId,
+                    prefill: {
+                        name: selectedCustomer.name || '',
+                        contact: selectedCustomer.phoneNumber || '',
+                    },
+                    theme: { color: '#16a34a' }, // primary-green
+                    modal: {
+                        // User dismissed the checkout without paying
+                        ondismiss: () => reject(new Error('Payment cancelled by user')),
+                    },
+                    handler: async (response: {
+                        razorpay_payment_id: string;
+                        razorpay_order_id: string;
+                        razorpay_signature: string;
+                    }) => {
+                        try {
+                            // ── Step 3: Verify payment signature on server ──────
+                            await billApi.verifyRazorpayPayment({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                billData: {
+                                    customerPhoneNumber: selectedCustomer.phoneNumber,
+                                    items: cart.map(i => ({
+                                        productId: i._id!,
+                                        quantity: i.quantity,
+                                        price: i.price
+                                    })),
+                                },
+                            });
+
+                            // ── Step 4: Sync local Dexie DB (same as cash path) ─
+                            await db.ledger.add({
+                                customerId: selectedCustomer.phoneNumber,
+                                amount: cartTotal,
+                                paymentMode: 'ONLINE' as any,
+                                type: 'debit',
+                                status: 'PAID',
+                                createdAt: Date.now(),
+                                paidAt: Date.now(),
+                                items: cart
+                            });
+                            const localCust = await db.customers
+                                .where('phoneNumber').equals(selectedCustomer.phoneNumber).first();
+                            if (localCust) {
+                                await db.customers.update(localCust.id!, {
+                                    totalTransactions: (localCust.totalTransactions || 0) + 1
+                                });
+                            }
+
+                            addToast('UPI Payment Verified & Transaction Complete!', 'success');
+                            loadProducts();
+                            resolve();
+                        } catch (verifyErr: any) {
+                            reject(verifyErr);
+                        }
+                    },
+                };
+
+                // window.Razorpay is loaded via the CDN script in index.html
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', (failureResponse: any) => {
+                    reject(new Error(
+                        failureResponse.error?.description || 'Razorpay payment failed'
+                    ));
+                });
+
+                // Show the modal AFTER we set up all handlers
+                setShowStatusModal(true);
+                rzp.open();
+            });
+
+            // If we reach here, payment succeeded → hide spinner, show success ✓
             setIsProcessing(false);
-        } else {
+        } catch (err: any) {
+            console.error('[Razorpay]', err);
             setShowStatusModal(false);
+            setIsProcessing(false);
+            if (err.message !== 'Payment cancelled by user') {
+                addToast(err.response?.data?.message || err.message || 'UPI Payment Failed', 'error');
+            }
         }
     };
 

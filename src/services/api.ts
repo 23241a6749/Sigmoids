@@ -56,6 +56,16 @@ export const billApi = {
         api.post('/bills/khata/send-otp', { customerPhoneNumber }),
     verifyKhataOtp: (data: { customerPhoneNumber: string; otp: string; billData: any }) =>
         api.post('/bills/khata/verify-otp', data),
+    // Razorpay: creates a server-side order and returns orderId + keyId
+    createRazorpayOrder: (amountInPaise: number) =>
+        api.post('/bills/razorpay/create-order', { amount: amountInPaise }),
+    // Razorpay: verifies signature and creates the bill in DB
+    verifyRazorpayPayment: (data: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+        billData: { customerPhoneNumber: string; items: Array<{ productId: string; quantity: number; price: number }> };
+    }) => api.post('/bills/razorpay/verify-payment', data),
 };
 
 export const ledgerApi = {

@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
+import Razorpay from 'razorpay';
 import { Bill } from '../models/Bill.js';
 import { Product } from '../models/Product.js';
 import { Customer } from '../models/Customer.js';
@@ -12,6 +14,12 @@ import twilio from 'twilio';
 
 const router = express.Router();
 const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+// Razorpay instance (uses test keys from .env)
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!
+});
 
 // Helper function to create a bill (reusable)
 async function createBillInternal(session: mongoose.ClientSession, data: any, userId: string) {
@@ -196,6 +204,84 @@ router.post('/khata/verify-otp', auth, async (req, res) => {
         res.status(201).json(bill);
     } catch (err: any) {
         await session.abortTransaction();
+        res.status(400).json({ message: err.message });
+    } finally {
+        session.endSession();
+    }
+});
+
+// ─────────────────────────────────────────────
+// RAZORPAY: Create Order
+// Frontend calls this to get an order_id before opening the checkout popup.
+// ─────────────────────────────────────────────
+router.post('/razorpay/create-order', auth, async (req, res) => {
+    try {
+        const { amount } = req.body; // amount in PAISE (rupees * 100)
+        if (!amount || isNaN(amount) || amount <= 0) {
+            return res.status(400).json({ message: 'Invalid amount' });
+        }
+
+        const order = await razorpay.orders.create({
+            amount: Math.round(amount), // must be integer paise
+            currency: 'INR',
+            receipt: `rcpt_${Date.now()}`,
+        });
+
+        // Send back both order details AND the public key_id so the frontend
+        // can open Razorpay checkout without hard-coding the key.
+        res.json({
+            orderId: order.id,
+            amount: order.amount,
+            currency: order.currency,
+            keyId: process.env.RAZORPAY_KEY_ID
+        });
+    } catch (err: any) {
+        console.error('[Razorpay] create-order error:', err);
+        res.status(500).json({ message: err.error?.description || 'Failed to create Razorpay order' });
+    }
+});
+
+// ─────────────────────────────────────────────
+// RAZORPAY: Verify Payment & Complete Bill
+// Called after the user successfully pays in the Razorpay popup.
+// Verifies the HMAC signature, then creates the bill exactly like a
+// regular cash/online payment would.
+// ─────────────────────────────────────────────
+router.post('/razorpay/verify-payment', auth, async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            billData // same shape as the regular /bills POST body
+        } = req.body;
+
+        // 1. Verify HMAC-SHA256 signature
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET!)
+            .update(`${razorpay_order_id}|${razorpay_payment_id}`)
+            .digest('hex');
+
+        if (expectedSignature !== razorpay_signature) {
+            throw new Error('Payment signature verification failed');
+        }
+
+        // 2. Signature valid → complete the bill (paymentType = 'online')
+        if (!req.auth?.userId) throw new Error('Authentication required');
+        const bill = await createBillInternal(
+            session,
+            { ...billData, paymentType: 'online' },
+            req.auth.userId
+        );
+
+        await session.commitTransaction();
+        res.status(201).json({ bill, razorpayPaymentId: razorpay_payment_id });
+    } catch (err: any) {
+        await session.abortTransaction();
+        console.error('[Razorpay] verify-payment error:', err);
         res.status(400).json({ message: err.message });
     } finally {
         session.endSession();
