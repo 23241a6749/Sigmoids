@@ -36,10 +36,10 @@ invoiceRouter.post('/import-khata', auth, async (req, res) => {
 
             const cleanPhone = customer.phoneNumber.replace('whatsapp:', '').replace('+', '\\+');
 
-            // Check if AI is already chasing this client natively
+            // Check if AI is already chasing this client natively (any active status)
             const existingInvoice = await Invoice.findOne({
                 client_phone: { $regex: new RegExp(cleanPhone.slice(-10) + '$') },
-                status: { $in: ['unpaid', 'overdue'] }
+                status: { $in: ['unpaid', 'overdue', 'promised', 'disputed'] }
             });
 
             if (!existingInvoice) {
@@ -52,7 +52,7 @@ invoiceRouter.post('/import-khata', auth, async (req, res) => {
                     amount: account.balance,
                     due_date: pastDate, // Overdue instantly 
                     status: 'overdue',
-                    reminder_level: 1
+                    reminder_level: 0   // Start at 0 so escalation engine sends WhatsApp first
                 });
                 await khataInvoice.save();
                 importedCount++;

@@ -79,7 +79,9 @@ export default function InvoiceDashboard() {
     };
 
     const totalInvoices = invoices.length;
-    const activeRecoveries = invoices.filter(i => i.status === 'overdue').length;
+    const activeRecoveries = invoices.filter(i => ['overdue', 'unpaid'].includes(i.status)).length;
+    const promisedCount = invoices.filter(i => i.status === 'promised').length;
+    const disputedCount = invoices.filter(i => i.status === 'disputed').length;
     const recoveredInvoices = invoices.filter(i => i.status === 'paid').length;
     const totalAmountRecovered = invoices.filter(i => i.status === 'paid').reduce((acc, cv) => acc + cv.amount, 0);
 
@@ -125,12 +127,14 @@ export default function InvoiceDashboard() {
             </div>
 
             {/* Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                 {[
-                    { title: 'Total Invoices', val: totalInvoices, icon: <Clock className="h-6 w-6 text-blue-500 dark:text-blue-400" />, color: 'from-blue-500/10 to-transparent border-blue-200 dark:border-blue-900/50' },
-                    { title: 'Active Recoveries', val: activeRecoveries, icon: <Activity className="h-6 w-6 text-orange-500 dark:text-orange-400" />, color: 'from-orange-500/10 to-transparent border-orange-200 dark:border-orange-900/50' },
-                    { title: 'Completed (Paid)', val: recoveredInvoices, icon: <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400" />, color: 'from-green-500/10 to-transparent border-green-200 dark:border-green-900/50' },
-                    { title: 'Revenue Recovered', val: `₹${totalAmountRecovered}`, icon: <ShieldAlert className="h-6 w-6 text-purple-500 dark:text-purple-400" />, color: 'from-purple-500/10 to-transparent border-purple-200 dark:border-purple-900/50' },
+                    { title: 'Total Targets', val: totalInvoices, icon: <Clock className="h-6 w-6 text-blue-500 dark:text-blue-400" />, color: 'from-blue-500/10 to-transparent border-blue-200 dark:border-blue-900/50' },
+                    { title: 'Active Chasing', val: activeRecoveries, icon: <Activity className="h-6 w-6 text-orange-500 dark:text-orange-400" />, color: 'from-orange-500/10 to-transparent border-orange-200 dark:border-orange-900/50' },
+                    { title: 'Promised', val: promisedCount, icon: <CheckCircle className="h-6 w-6 text-cyan-500 dark:text-cyan-400" />, color: 'from-cyan-500/10 to-transparent border-cyan-200 dark:border-cyan-900/50' },
+                    { title: 'Disputed', val: disputedCount, icon: <ShieldAlert className="h-6 w-6 text-rose-500 dark:text-rose-400" />, color: 'from-rose-500/10 to-transparent border-rose-200 dark:border-rose-900/50' },
+                    { title: 'Resolved (Paid)', val: recoveredInvoices, icon: <CheckCircle className="h-6 w-6 text-green-500 dark:text-green-400" />, color: 'from-green-500/10 to-transparent border-green-200 dark:border-green-900/50' },
+                    { title: 'Revenue Recovered', val: `\u20B9${totalAmountRecovered}`, icon: <Zap className="h-6 w-6 text-purple-500 dark:text-purple-400" />, color: 'from-purple-500/10 to-transparent border-purple-200 dark:border-purple-900/50' },
                 ].map((card, idx) => (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -212,10 +216,14 @@ export default function InvoiceDashboard() {
                                                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black tracking-wide
                                                             ${inv.status === 'paid' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
                                                                 inv.status === 'overdue' ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400 animate-pulse' :
-                                                                    'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300'
+                                                                    inv.status === 'promised' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-500/20 dark:text-cyan-400' :
+                                                                        inv.status === 'disputed' ? 'bg-rose-100 text-rose-700 dark:bg-rose-500/20 dark:text-rose-400' :
+                                                                            'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300'
                                                             }`}>
                                                             {inv.status === 'overdue' && <div className="w-1.5 h-1.5 rounded-full bg-orange-500" />}
                                                             {inv.status === 'paid' && <CheckCircle className="h-3 w-3" />}
+                                                            {inv.status === 'promised' && <Clock className="h-3 w-3" />}
+                                                            {inv.status === 'disputed' && <ShieldAlert className="h-3 w-3" />}
                                                             {inv.status.toUpperCase()}
                                                         </span>
                                                     </td>

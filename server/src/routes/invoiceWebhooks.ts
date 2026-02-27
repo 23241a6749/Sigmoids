@@ -156,7 +156,9 @@ invoiceWebhooksRouter.post('/voice', async (req: Request, res: Response) => {
         const { To, From, SpeechResult } = req.body;
 
         let targetPhone = From;
-        if (From === process.env.TWILIO_PHONE_NUMBER?.replace('whatsapp:', '')) {
+        // On outbound calls from Twilio, the 'From' is our Twilio number
+        const voiceNumber = (process.env.TWILIO_VOICE_NUMBER || process.env.TWILIO_PHONE_NUMBER || '').replace('whatsapp:', '');
+        if (From === voiceNumber) {
             targetPhone = To;
         }
 
@@ -250,18 +252,19 @@ Do NOT use rupee symbol, emojis, or special characters.`;
 
             // Handle intent-based actions
             if (intent === 'PAYMENT_PROMISED') {
+                invoice.status = 'promised';
                 invoice.reminder_history.push({
                     timestamp: new Date(),
                     channel: 'system',
-                    message_content: '[AUTO] Customer promised payment. Sending WhatsApp payment link.',
+                    message_content: '[AUTO] Customer promised payment on call. Sending WhatsApp UPI link. Scheduler paused.',
                     delivery_status: 'delivered'
                 });
-                // Send WhatsApp follow-up after call ends
+                // Send WhatsApp follow-up + sync Khata after call ends
                 setImmediate(async () => {
                     await sendWhatsAppFollowUp(invoice);
                 });
             } else if (intent === 'DISPUTE') {
-                invoice.status = 'disputed' as any;
+                invoice.status = 'disputed';
             } else if (intent === 'EXTENSION_REQUESTED') {
                 const extDate = new Date();
                 extDate.setDate(extDate.getDate() + 3);

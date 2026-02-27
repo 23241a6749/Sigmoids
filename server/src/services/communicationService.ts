@@ -59,15 +59,25 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
                 console.log(`[Mock Call] to ${invoice.client_phone}: ${message}`);
                 return 'simulated_delivered';
             }
-            const fromNumCall = process.env.TWILIO_PHONE_NUMBER?.replace('whatsapp:', '') || '';
+            // Voice calls use the standard Twilio number, NOT the WhatsApp sandbox
+            const voiceNumber = (process.env.TWILIO_VOICE_NUMBER || process.env.TWILIO_PHONE_NUMBER || '').replace('whatsapp:', '');
             const toNumCall = invoice.client_phone.replace('whatsapp:', '');
+
+            // Sanitize the AI-generated opening message for strict TwiML XML
+            const safeMessage = message
+                .replace(/&/g, ' and ')
+                .replace(/</g, '')
+                .replace(/>/g, '')
+                .replace(/₹/g, 'rupees ')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&apos;');
 
             const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
 
             await twilioClient.calls.create({
-                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="5" speechTimeout="auto" language="en-IN" enhanced="true" speechModel="phone_call" profanityFilter="false" hints="pay, tomorrow, Friday, today, next week, wait, cash, UPI, salary, later, done, sent, clear"><Say voice="alice" language="en-IN">${message}</Say></Gather></Response>`,
+                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="5" speechTimeout="auto" language="en-IN" enhanced="true" speechModel="phone_call" profanityFilter="false" hints="pay, tomorrow, Friday, today, next week, wait, cash, UPI, salary, later, done, sent, clear"><Say voice="alice" language="en-IN">${safeMessage}</Say></Gather></Response>`,
                 to: toNumCall,
-                from: fromNumCall
+                from: voiceNumber
             });
             return 'delivered';
 
