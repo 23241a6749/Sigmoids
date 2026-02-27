@@ -23,9 +23,11 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
                 console.log(`[Mock WhatsApp] to ${invoice.client_phone}: ${message}`);
                 return 'simulated_delivered';
             }
-            const fromNum = process.env.TWILIO_PHONE_NUMBER?.startsWith('whatsapp:')
-                ? process.env.TWILIO_PHONE_NUMBER
-                : `whatsapp:${process.env.TWILIO_PHONE_NUMBER}`;
+            // For Hackathons using the WhatsApp Sandbox, the From number is always +1 415 523 8886
+            const twilioWhatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+            const fromNum = twilioWhatsappNum.startsWith('whatsapp:')
+                ? twilioWhatsappNum
+                : `whatsapp:${twilioWhatsappNum}`;
             const toNum = invoice.client_phone.startsWith('whatsapp:')
                 ? invoice.client_phone
                 : `whatsapp:${invoice.client_phone}`;
@@ -100,6 +102,30 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
         return 'failed_unknown_channel';
     } catch (error) {
         console.error(`Error sending ${channel} notification to ${invoice.client_name}:`, error);
+        return 'failed';
+    }
+}
+
+export async function sendGenericMessage(phone: string, message: string, channel: string): Promise<string> {
+    try {
+        if (channel === 'whatsapp') {
+            if (!twilioAvailable || !twilioClient) return 'simulated_delivered';
+            const twilioWhatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+            const fromNum = twilioWhatsappNum.startsWith('whatsapp:')
+                ? twilioWhatsappNum
+                : `whatsapp:${twilioWhatsappNum}`;
+            const toNum = phone.startsWith('whatsapp:') ? phone : `whatsapp:${phone}`;
+
+            await twilioClient.messages.create({
+                body: message,
+                from: fromNum,
+                to: toNum
+            });
+            return 'delivered';
+        }
+        return 'unsupported';
+    } catch (e) {
+        console.error('Error sending generic message:', e);
         return 'failed';
     }
 }

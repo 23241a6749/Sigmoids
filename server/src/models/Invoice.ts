@@ -14,7 +14,7 @@ export interface IInvoice extends Document {
     client_phone: string;
     amount: number;
     due_date: Date;
-    status: 'paid' | 'unpaid' | 'overdue';
+    status: 'paid' | 'unpaid' | 'overdue' | 'disputed' | 'promised';
     reminder_level: number;
     last_contacted_at: Date | null;
     payment_link: string;
@@ -35,7 +35,7 @@ const InvoiceSchema = new Schema<IInvoice>({
     client_phone: { type: String, required: true },
     amount: { type: Number, required: true },
     due_date: { type: Date, required: true },
-    status: { type: String, enum: ['paid', 'unpaid', 'overdue'], default: 'unpaid' },
+    status: { type: String, enum: ['paid', 'unpaid', 'overdue', 'disputed', 'promised'], default: 'unpaid' },
     reminder_level: { type: Number, default: 0 },
     last_contacted_at: { type: Date, default: null },
     payment_link: { type: String, default: '' },

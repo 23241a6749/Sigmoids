@@ -78,7 +78,7 @@ mongoose.connect(process.env.MONGODB_URI!)
         // Start background tasks
         startInvoiceScheduler();
 
-        httpServer.listen(PORT, () => {
+        httpServer.listen(Number(PORT), '0.0.0.0', () => {
             console.log(`Server (ShopOS) is running on port ${PORT}`);
         });
     })

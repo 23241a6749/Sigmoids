@@ -1,5 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { Invoice } from '../models/Invoice.js';
+import { CustomerAccount } from '../models/CustomerAccount.js';
+import { auth } from '../middleware/auth.js';
 
 export const invoiceRouter = Router();
 
@@ -12,6 +14,55 @@ invoiceRouter.post('/', async (req, res) => {
     } catch (error) {
         console.error('Error creating invoice:', error);
         res.status(500).json({ error: 'Failed to create invoice' });
+    }
+});
+
+// Import Live Pending Khata Balances into Voice Auto-Pilot Queue
+invoiceRouter.post('/import-khata', auth, async (req, res) => {
+    try {
+        // Find all Khata accounts for this shopkeeper that have pending dues (balance > 0)
+        const overdueAccounts = await CustomerAccount.find({
+            shopkeeperId: req.auth?.userId,
+            balance: { $gt: 0 }
+        }).populate('customerId');
+
+        let importedCount = 0;
+        const pastDate = new Date();
+        pastDate.setDate(pastDate.getDate() - 15); // Force it instantly overdue for demo/auto-pilot fast pickup
+
+        for (const account of overdueAccounts) {
+            const customer = account.customerId as any;
+            if (!customer || !customer.phoneNumber) continue;
+
+            const cleanPhone = customer.phoneNumber.replace('whatsapp:', '').replace('+', '\\+');
+
+            // Check if AI is already chasing this client natively
+            const existingInvoice = await Invoice.findOne({
+                client_phone: { $regex: new RegExp(cleanPhone.slice(-10) + '$') },
+                status: { $in: ['unpaid', 'overdue'] }
+            });
+
+            if (!existingInvoice) {
+                // Bridge Khata to Invoice Chaser
+                const khataInvoice = new Invoice({
+                    invoice_id: `KHATA-${Math.floor(Math.random() * 100000)}`,
+                    client_name: customer.name || 'Valued Customer',
+                    client_email: `${(customer.name || 'user').replace(/\s/g, '').toLowerCase()}@example.com`,
+                    client_phone: customer.phoneNumber,
+                    amount: account.balance,
+                    due_date: pastDate, // Overdue instantly 
+                    status: 'overdue',
+                    reminder_level: 1
+                });
+                await khataInvoice.save();
+                importedCount++;
+            }
+        }
+
+        res.json({ message: `Successfully synchronized ${importedCount} pending Khata customers into the Voice Auto-Pilot queue.` });
+    } catch (error) {
+        console.error('Error importing khata to invoices:', error);
+        res.status(500).json({ error: 'Failed to synchronize Khata balances' });
     }
 });
 

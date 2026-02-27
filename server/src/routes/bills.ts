@@ -144,9 +144,10 @@ router.post('/khata/send-otp', auth, async (req, res) => {
         );
 
 
-        if (process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_SMS_NUMBER) {
-            const isWhatsApp = process.env.TWILIO_PHONE_NUMBER?.startsWith('whatsapp:');
-            const from = isWhatsApp ? process.env.TWILIO_PHONE_NUMBER : (process.env.TWILIO_SMS_NUMBER || process.env.TWILIO_PHONE_NUMBER);
+        if (process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_WHATSAPP_NUMBER || process.env.TWILIO_SMS_NUMBER) {
+            const twilioWhatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+            const isWhatsApp = twilioWhatsappNum.startsWith('whatsapp:');
+            const from = twilioWhatsappNum;
 
             const cleanPhone = customerPhoneNumber.replace(/\D/g, '').slice(-10);
             const to = isWhatsApp ? `whatsapp:+91${cleanPhone}` : `+91${cleanPhone}`;

@@ -95,7 +95,8 @@ export const invoiceApi = {
     getInvoices: () => api.get('/invoices'),
     getOverdueInvoices: () => api.get('/invoices/overdue'),
     createDemoInvoice: (data: any) => api.post('/invoices', data),
-    markInvoicePaid: (id: string) => api.put(`/invoices/${id}/payment`)
+    markInvoicePaid: (id: string) => api.put(`/invoices/${id}/payment`),
+    importKhataDues: () => api.post('/invoices/import-khata')
 };
 
 export default api;
