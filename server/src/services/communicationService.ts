@@ -59,23 +59,24 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
                 console.log(`[Mock Call] to ${invoice.client_phone}: ${message}`);
                 return 'simulated_delivered';
             }
-            // Voice calls use the standard Twilio number, NOT the WhatsApp sandbox
             const voiceNumber = (process.env.TWILIO_VOICE_NUMBER || process.env.TWILIO_PHONE_NUMBER || '').replace('whatsapp:', '');
             const toNumCall = invoice.client_phone.replace('whatsapp:', '');
 
-            // Sanitize the AI-generated opening message for strict TwiML XML
-            const safeMessage = message
+            // Sanitize for TwiML XML
+            const safeMessage = (message || '')
                 .replace(/&/g, ' and ')
                 .replace(/</g, '')
                 .replace(/>/g, '')
                 .replace(/₹/g, 'rupees ')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&apos;');
+                .replace(/"/g, '')
+                .replace(/'/g, '')
+                .replace(/\n/g, '. ')
+                .replace(/\r/g, '')
+                .trim();
 
-            const backendUrl = process.env.BACKEND_URL || 'https://REPLACE_WITH_NGROK_URL';
-
+            // Simple Say + Hangup — no webhook needed, works without tunnel
             await twilioClient.calls.create({
-                twiml: `<Response><Gather input="speech" action="${backendUrl}/api/invoices/webhook/voice" timeout="5" speechTimeout="auto" language="en-IN" enhanced="true" speechModel="phone_call" profanityFilter="false" hints="pay, tomorrow, Friday, today, next week, wait, cash, UPI, salary, later, done, sent, clear"><Say voice="alice" language="en-IN">${safeMessage}</Say></Gather></Response>`,
+                twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice" language="en-IN">${safeMessage}</Say><Pause length="1"/><Say voice="alice" language="en-IN">Thank you. Goodbye.</Say><Hangup/></Response>`,
                 to: toNumCall,
                 from: voiceNumber
             });
