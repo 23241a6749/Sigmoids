@@ -27,6 +27,8 @@ import analyticsRouter from './routes/analytics.js';
 import { supplierBillsRouter } from './routes/supplierBills.js';
 import { aiRouter } from './routes/ai.js';
 import { invoiceRouter } from './routes/invoices.js';
+import { startInvoiceScheduler } from './jobs/reminderScheduler.js';
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -69,6 +71,10 @@ io.on('connection', (socket) => {
 mongoose.connect(process.env.MONGODB_URI!)
     .then(() => {
         console.log('Connected to MongoDB Atlas');
+
+        // Start background tasks
+        startInvoiceScheduler();
+
         httpServer.listen(PORT, () => {
             console.log(`Server (ShopOS) is running on port ${PORT}`);
         });
