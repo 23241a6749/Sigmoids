@@ -26,7 +26,7 @@ import { whatsappRouter } from './routes/whatsapp.js';
 import analyticsRouter from './routes/analytics.js';
 import { supplierBillsRouter } from './routes/supplierBills.js';
 import { aiRouter } from './routes/ai.js';
-
+import { invoiceRouter } from './routes/invoices.js';
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
@@ -60,7 +60,7 @@ app.use('/api/whatsapp', whatsappRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/supplier-bills', supplierBillsRouter);
 app.use('/api/ai', aiRouter);
-
+app.use('/api/invoices', invoiceRouter);
 io.on('connection', (socket) => {
     console.log('User connected to socket:', socket.id);
 });
