@@ -76,7 +76,7 @@ export async function sendNotification(invoice: IInvoice, message: string, chann
 
             // Simple Say + Hangup — no webhook needed, works without tunnel
             await twilioClient.calls.create({
-                twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice" language="en-IN">${safeMessage}</Say><Pause length="1"/><Say voice="alice" language="en-IN">Thank you. Goodbye.</Say><Hangup/></Response>`,
+                twiml: `<?xml version="1.0" encoding="UTF-8"?><Response><Say voice="alice" language="en-IN">${safeMessage}</Say><Pause length="3"/><Say voice="alice" language="en-IN">Thank you. Goodbye.</Say><Hangup/></Response>`,
                 to: toNumCall,
                 from: voiceNumber
             });
