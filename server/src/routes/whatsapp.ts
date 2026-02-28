@@ -142,6 +142,7 @@ router.post('/broadcast-reminders', async (req: any, res) => {
                     const { text } = createDuesResponse(customer, customer.lang || 'en');
                     const fromNum = process.env.TWILIO_WHATSAPP_NUMBER || process.env.TWILIO_PHONE_NUMBER || '';
 
+                    const twilioWhatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
                     await twilioClient.messages.create({
                         body: text,
                         from: fromNum,
@@ -154,8 +155,9 @@ router.post('/broadcast-reminders', async (req: any, res) => {
 
                     let errorMsg = err.message;
                     if (err.code === 63015) {
-                        errorMsg = "User has not joined Sandbox. Reply 'join <keyword>' to the Sandbox number.";
-                        console.warn(`⚠️ SANDBOX RESTRICTION: ${phone} must message ${process.env.TWILIO_PHONE_NUMBER} first.`);
+                        const twilioWhatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+                        errorMsg = `User has not joined Sandbox. Reply 'join <keyword>' to the Sandbox number ${twilioWhatsappNum}.`;
+                        console.warn(`⚠️ SANDBOX RESTRICTION: ${phone} must message ${twilioWhatsappNum} first.`);
                     }
                     errors.push({ phone, error: errorMsg });
                 }

@@ -26,6 +26,9 @@ import { whatsappRouter } from './routes/whatsapp.js';
 import analyticsRouter from './routes/analytics.js';
 import { supplierBillsRouter } from './routes/supplierBills.js';
 import { aiRouter } from './routes/ai.js';
+import { invoiceRouter } from './routes/invoices.js';
+import { invoiceWebhooksRouter } from './routes/invoiceWebhooks.js';
+import { startInvoiceScheduler } from './jobs/reminderScheduler.js';
 
 const app = express();
 const httpServer = createServer(app);
@@ -60,6 +63,8 @@ app.use('/api/whatsapp', whatsappRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/supplier-bills', supplierBillsRouter);
 app.use('/api/ai', aiRouter);
+app.use('/api/invoices', invoiceRouter);
+app.use('/api/invoices/webhook', invoiceWebhooksRouter);
 
 io.on('connection', (socket) => {
     console.log('User connected to socket:', socket.id);
@@ -69,7 +74,11 @@ io.on('connection', (socket) => {
 mongoose.connect(process.env.MONGODB_URI!)
     .then(() => {
         console.log('Connected to MongoDB Atlas');
-        httpServer.listen(PORT, () => {
+
+        // Start background tasks
+        startInvoiceScheduler();
+
+        httpServer.listen(Number(PORT), '0.0.0.0', () => {
             console.log(`Server (ShopOS) is running on port ${PORT}`);
         });
     })

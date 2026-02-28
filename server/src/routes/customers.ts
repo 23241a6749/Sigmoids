@@ -3,6 +3,7 @@ import { Customer } from '../models/Customer.js';
 import { CustomerAccount } from '../models/CustomerAccount.js';
 import { auth } from '../middleware/auth.js';
 import { recalculateGlobalKhataScore } from '../utils/khataScore.js';
+import { sendGenericMessage } from '../services/communicationService.js';
 
 const router = express.Router();
 
@@ -139,6 +140,11 @@ router.post('/', auth, async (req, res) => {
                 balance: 0
             });
             await account.save();
+
+            // Send WhatsApp Welcome / OTP notification over Twilio
+            const otpCode = Math.floor(100000 + Math.random() * 900000);
+            const welcomeMsg = `Welcome to KiranaLink, ${customer.name || 'valued customer'}! 🎉\nYour Khata account has been successfully linked.\nYour security OTP is: *${otpCode}*\n\nThank you for trusting your local Kirana store!`;
+            sendGenericMessage(normalizedPhone, welcomeMsg, 'whatsapp').catch(console.error);
         }
 
         res.json({
