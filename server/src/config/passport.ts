@@ -3,9 +3,6 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { User } from '../models/User.js';
 import { Product } from '../models/Product.js';
 import { starterProducts } from '../utils/starterProducts.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID || 'placeholder',

@@ -1,12 +1,4 @@
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-dotenv.config({ path: join(__dirname, '../.env') });
-
+import './loadEnv.js';
 import dns from 'dns';
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 import express from 'express';
