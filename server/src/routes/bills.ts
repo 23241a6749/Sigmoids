@@ -13,13 +13,37 @@ import { recalculateGlobalKhataScore } from '../utils/khataScore.js';
 import twilio from 'twilio';
 
 const router = express.Router();
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-// Razorpay instance (uses test keys from .env)
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID!,
-    key_secret: process.env.RAZORPAY_KEY_SECRET!
-});
+// ── LAZY INITIALIZATION HELPERS ──────────────────────────────────────────
+// In ESM, top-level code runs before dotenv.config() in index.ts. 
+// These helpers ensure env vars are actually loaded before we use them.
+
+let _twilioClient: any = null;
+function getTwilioClient() {
+    if (!_twilioClient) {
+        if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
+            console.error('[Twilio] CRITICAL: SID or TOKEN missing in .env');
+            return null;
+        }
+        _twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+    }
+    return _twilioClient;
+}
+
+let _razorpay: any = null;
+function getRazorpay() {
+    if (!_razorpay) {
+        if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+            console.error('[Razorpay] CRITICAL: Key ID or Secret missing in .env');
+            return null;
+        }
+        _razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID,
+            key_secret: process.env.RAZORPAY_KEY_SECRET
+        });
+    }
+    return _razorpay;
+}
 
 // Helper function to create a bill (reusable)
 async function createBillInternal(session: mongoose.ClientSession, data: any, userId: string) {
@@ -143,28 +167,52 @@ router.post('/khata/send-otp', auth, async (req, res) => {
             { upsert: true }
         );
 
+        // ── ALWAYS log OTP to console first so it's visible even if Twilio fails ──
+        console.log(`\n╔══════════════════════════════════════╗`);
+        console.log(`║  [KHATA OTP]  ${otp}                   ║`);
+        console.log(`║  Phone: ${customerPhoneNumber}  ║`);
+        console.log(`╚══════════════════════════════════════╝\n`);
 
-        if (process.env.TWILIO_PHONE_NUMBER || process.env.TWILIO_SMS_NUMBER) {
-            const isWhatsApp = process.env.TWILIO_PHONE_NUMBER?.startsWith('whatsapp:');
-            const from = isWhatsApp ? process.env.TWILIO_PHONE_NUMBER : (process.env.TWILIO_SMS_NUMBER || process.env.TWILIO_PHONE_NUMBER);
+        // ── Try to send via Twilio ──────────────────────────────────────────────
+        const whatsappNum = process.env.TWILIO_WHATSAPP_NUMBER || process.env.TWILIO_PHONE_NUMBER;
+        const smsNum = process.env.TWILIO_SMS_NUMBER || process.env.TWILIO_PHONE_NUMBER;
+
+        if (whatsappNum || smsNum) {
+            const isWhatsApp = whatsappNum?.startsWith('whatsapp:');
+            const from = isWhatsApp ? whatsappNum : smsNum;
 
             const cleanPhone = customerPhoneNumber.replace(/\D/g, '').slice(-10);
             const to = isWhatsApp ? `whatsapp:+91${cleanPhone}` : `+91${cleanPhone}`;
 
-            console.log(`[Twilio] Sending OTP via ${isWhatsApp ? 'WhatsApp' : 'SMS'} to ${to} from ${from}...`);
+            if (isWhatsApp) {
+                // ⚠️  Twilio WhatsApp SANDBOX requires the recipient to first send
+                //     "join <sandbox-word>" to +14155238886 from their WhatsApp.
+                //     If they haven't done that, the message will silently fail.
+                //     Either ask the customer to join, or switch to SMS by setting
+                //     TWILIO_SMS_NUMBER to a Twilio SMS number (no 'whatsapp:' prefix).
+                console.log(`[Twilio] Sending WhatsApp OTP to ${to} — recipient must have joined the sandbox.`);
+            } else {
+                console.log(`[Twilio] Sending SMS OTP to ${to}`);
+            }
+
             try {
-                await twilioClient.messages.create({
-                    body: `[KLink] Your OTP for Khata payment is: ${otp}. Valid for 5 mins.`,
+                const client = getTwilioClient();
+                if (!client) throw new Error('Twilio client not initialized');
+
+                await client.messages.create({
+                    body: `[KLink] Your Khata OTP is: ${otp}. Valid for 5 mins. Do not share.`,
                     from: from,
                     to: to
                 });
-                console.log('[Twilio] OTP sent successfully');
+                console.log('[Twilio] ✅ Message sent successfully');
             } catch (twilioErr: any) {
-                console.error('[Twilio] Error:', twilioErr.message);
-                // Don't throw here, just log it so the response can still be sent (though OTP failed)
+                // Log full Twilio error — the OTP is still in DB so manual entry works
+                console.error('[Twilio] ❌ Failed to send message:');
+                console.error('  Code   :', twilioErr.code);
+                console.error('  Message:', twilioErr.message);
+                console.error('  More   :', twilioErr.moreInfo);
+                // Do NOT throw — the OTP is stored in DB so the user can still enter it
             }
-        } else {
-            console.log(`[MOCK OTP] Phone: ${customerPhoneNumber}, OTP: ${otp}`);
         }
 
         res.json({ message: 'OTP sent' });
@@ -190,6 +238,12 @@ router.post('/khata/verify-otp', auth, async (req, res) => {
             throw new Error('Max attempts reached. Please resend OTP.');
         }
 
+        // Check expiry
+        if (otpRecord.expiresAt < new Date()) {
+            await OTP.deleteOne({ phoneNumber: customerPhoneNumber });
+            throw new Error('OTP has expired. Please request a new one.');
+        }
+
         if (otpRecord.otp !== otp) {
             otpRecord.attempts += 1;
             await otpRecord.save();
@@ -210,6 +264,15 @@ router.post('/khata/verify-otp', auth, async (req, res) => {
     }
 });
 
+// Diagnostic route
+router.get('/test-razorpay', (req, res) => {
+    res.json({
+        keyId: process.env.RAZORPAY_KEY_ID,
+        isLive: process.env.RAZORPAY_KEY_ID?.startsWith('rzp_live'),
+        envExists: !!process.env.RAZORPAY_KEY_ID
+    });
+});
+
 // ─────────────────────────────────────────────
 // RAZORPAY: Create Order
 // Frontend calls this to get an order_id before opening the checkout popup.
@@ -221,7 +284,10 @@ router.post('/razorpay/create-order', auth, async (req, res) => {
             return res.status(400).json({ message: 'Invalid amount' });
         }
 
-        const order = await razorpay.orders.create({
+        const rzp = getRazorpay();
+        if (!rzp) throw new Error('Razorpay client not initialized');
+
+        const order = await rzp.orders.create({
             amount: Math.round(amount), // must be integer paise
             currency: 'INR',
             receipt: `rcpt_${Date.now()}`,

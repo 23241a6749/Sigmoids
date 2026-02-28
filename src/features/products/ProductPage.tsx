@@ -206,8 +206,12 @@ export const ProductPage: React.FC = () => {
                     <Tag className="absolute left-4 top-4 text-gray-300" size={18} />
                     <input
                       type="number"
-                      value={formData.price}
-                      onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+                      value={formData.price === 0 ? '' : formData.price}
+                      placeholder="0"
+                      onChange={(e) => {
+                        const val = Math.min(Number(e.target.value) || 0, 10000000);
+                        setFormData({ ...formData, price: val });
+                      }}
                       className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent py-3 px-12 rounded-2xl font-bold focus:border-primary-green outline-none dark:text-white"
                     />
                   </div>
@@ -216,8 +220,12 @@ export const ProductPage: React.FC = () => {
                   <label className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1 block">Stock Count</label>
                   <input
                     type="number"
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: Number(e.target.value) })}
+                    value={formData.stock === 0 ? '' : formData.stock}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const val = Math.min(Number(e.target.value) || 0, 1000000);
+                      setFormData({ ...formData, stock: val });
+                    }}
                     className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent py-3 px-6 rounded-2xl font-bold focus:border-primary-green outline-none dark:text-white"
                   />
                 </div>
@@ -225,8 +233,12 @@ export const ProductPage: React.FC = () => {
                   <label className="text-[10px] font-black text-gray-400 uppercase ml-2 mb-1 block">Minimum Stock</label>
                   <input
                     type="number"
-                    value={formData.minStock}
-                    onChange={(e) => setFormData({ ...formData, minStock: Number(e.target.value) })}
+                    value={formData.minStock === 0 ? '' : formData.minStock}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const val = Math.min(Number(e.target.value) || 0, 1000000);
+                      setFormData({ ...formData, minStock: val });
+                    }}
                     className="w-full bg-gray-50 dark:bg-gray-800 border-2 border-transparent py-3 px-6 rounded-2xl font-bold focus:border-primary-green outline-none dark:text-white"
                   />
                 </div>

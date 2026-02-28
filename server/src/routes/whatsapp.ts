@@ -116,9 +116,9 @@ router.get('/analytics', (req, res) => {
     res.json(85400);
 });
 
-const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-
 router.post('/broadcast-reminders', async (req: any, res) => {
+    // Lazy Client initialization
+    const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
     // 1. Send Simulated UI Events (for the Demo Effect)
     if (req.io) {
         req.io.emit('whatsapp-event', {
@@ -140,10 +140,11 @@ router.post('/broadcast-reminders', async (req: any, res) => {
                 try {
                     // Create personalized message
                     const { text } = createDuesResponse(customer, customer.lang || 'en');
+                    const fromNum = process.env.TWILIO_WHATSAPP_NUMBER || process.env.TWILIO_PHONE_NUMBER || '';
 
                     await twilioClient.messages.create({
                         body: text,
-                        from: process.env.TWILIO_PHONE_NUMBER, // e.g., 'whatsapp:+14155238886'
+                        from: fromNum,
                         to: phone
                     });
                     sentCount++;

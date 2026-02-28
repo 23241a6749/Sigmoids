@@ -9,7 +9,6 @@ import { ProductPage } from './features/products/ProductPage';
 import { AnalyticsPage } from './features/analytics/AnalyticsPage';
 import { LedgerPage } from './features/ledger/LedgerPage';
 import { SupplierBillPage } from './features/supplier/SupplierBillPage';
-import WhatsAppPage from './features/whatsapp/WhatsAppPage';
 import RecoveryPage from './features/recovery/RecoveryPage';
 import { CartProvider } from './contexts/CartContext';
 import { LanguageProvider } from './contexts/LanguageContext';
@@ -44,7 +43,6 @@ function App() {
                   <Route path="analytics" element={<AnalyticsPage />} />
                   <Route path="supplier-bills" element={<SupplierBillPage />} />
                   <Route path="ledger" element={<LedgerPage />} />
-                  <Route path="whatsapp" element={<WhatsAppPage />} />
                   <Route path="recovery" element={<RecoveryPage />} />
                   <Route path="records" element={<LedgerPage />} />
                 </Route>

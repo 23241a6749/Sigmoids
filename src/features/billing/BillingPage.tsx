@@ -280,6 +280,26 @@ export const BillingPage: React.FC = () => {
                         contact: selectedCustomer.phoneNumber || '',
                     },
                     theme: { color: '#16a34a' }, // primary-green
+                    config: {
+                        display: {
+                            blocks: {
+                                utp: {
+                                    name: 'Pay with UPI QR',
+                                    instruments: [
+                                        {
+                                            method: 'upi',
+                                            apps: ['google_pay', 'phonepe', 'paytm'], // prioritize popular apps
+                                            display_name: 'UPI QR'
+                                        }
+                                    ]
+                                }
+                            },
+                            sequence: ['block.utp'],
+                            preferences: {
+                                show_default_blocks: true // show other methods as well but QR first
+                            }
+                        }
+                    },
                     modal: {
                         // User dismissed the checkout without paying
                         ondismiss: () => reject(new Error('Payment cancelled by user')),
@@ -736,9 +756,11 @@ export const BillingPage: React.FC = () => {
                                                     <button onClick={() => decreaseQuantity(item._id!)} className="w-8 h-8 bg-white dark:bg-gray-600 rounded-md flex items-center justify-center text-gray-700 dark:text-white"><Minus size={16} /></button>
                                                     <input
                                                         type="number"
-                                                        value={item.quantity}
+                                                        value={item.quantity === 0 ? '' : item.quantity}
+                                                        placeholder="0"
                                                         onChange={(e) => {
-                                                            const val = parseFloat(e.target.value) || 0;
+                                                            const rawVal = parseFloat(e.target.value) || 0;
+                                                            const val = Math.min(rawVal, 1000000);
                                                             const success = updateQuantity(item._id!, val, item.stock);
                                                             if (!success) addToast(`Only ${item.stock} ${item.unit} available`, 'warning');
                                                         }}
@@ -763,7 +785,36 @@ export const BillingPage: React.FC = () => {
                                         <div className="text-3xl font-black text-gray-900 dark:text-white">₹{cartTotal}</div>
                                     </div>
                                 </div>
-                                <button onClick={() => setCheckoutStep('CUSTOMER')} className="w-full bg-primary-green text-white py-4 rounded-xl font-bold text-lg shadow-lg flex justify-center items-center gap-2">Proceed <ChevronRight size={20} /></button>
+                                <button
+                                    onClick={() => setCheckoutStep('CUSTOMER')}
+                                    className="w-full relative overflow-hidden rounded-2xl text-white p-0 shadow-2xl active:scale-[0.97] transition-transform duration-150"
+                                    style={{
+                                        background: 'linear-gradient(135deg, #1B5E20 0%, #2E7D32 50%, #388E3C 100%)',
+                                        boxShadow: '0 8px 28px rgba(46,125,50,0.45), inset 0 1px 0 rgba(255,255,255,0.12)'
+                                    }}
+                                >
+                                    {/* shimmer sweep */}
+                                    <div
+                                        className="absolute inset-0 pointer-events-none"
+                                        style={{
+                                            background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.09) 50%, transparent 60%)',
+                                            backgroundSize: '200% 100%',
+                                            animation: 'shimmer 2.5s infinite linear'
+                                        }}
+                                    />
+                                    <div className="relative flex items-center justify-between px-5 py-4">
+                                        <div>
+                                            <div className="font-black text-base tracking-tight leading-none">Proceed to Checkout</div>
+                                            <div className="text-white/60 text-[11px] font-semibold mt-0.5">
+                                                {cart.length} {cart.length === 1 ? 'item' : 'items'} · Identify customer next
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <span className="font-black text-xl">₹{cartTotal}</span>
+                                            <ChevronRight size={20} className="text-white/70" />
+                                        </div>
+                                    </div>
+                                </button>
                             </div>
                         </div>
                     )}
@@ -1012,8 +1063,8 @@ export const BillingPage: React.FC = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <div className="font-semibold text-gray-900 dark:text-white">UPI / Online</div>
-                                                    <div className="text-xs text-gray-500 dark:text-gray-400">PhonePe, GPay, Paytm</div>
+                                                    <div className="font-semibold text-gray-900 dark:text-white">UPI / QR Scan</div>
+                                                    <div className="text-xs text-gray-500 dark:text-gray-400">Scan & Pay (GPay, PhonePe, Paytm)</div>
                                                 </div>
                                             </div>
                                             <input

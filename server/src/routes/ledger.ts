@@ -45,6 +45,11 @@ router.post('/payment', auth, async (req, res) => {
 
         if (!account) throw new Error('Customer account for this shop not found');
 
+        // Prevent settling more than current balance
+        if (amount > account.balance) {
+            throw new Error(`Payment amount (₹${amount}) exceeds the current balance (₹${account.balance}).`);
+        }
+
         account.balance -= amount;
         await account.save({ session });
 

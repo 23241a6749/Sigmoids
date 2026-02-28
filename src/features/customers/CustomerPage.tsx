@@ -4,6 +4,7 @@ import { customerApi, ledgerApi } from '../../services/api';
 import type { Customer } from '../../db/db';
 import { db } from '../../db/db';
 import { getKhataStatus, recalculateKhataScore } from '../../lib/khataLogic';
+import { useToast } from '../../contexts/ToastContext';
 
 export const CustomerPage: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -19,6 +20,7 @@ export const CustomerPage: React.FC = () => {
   const [viewingCustomer, setViewingCustomer] = useState<any | null>(null);
   const [customerTransactions, setCustomerTransactions] = useState<any[]>([]);
   const [txFilter, setTxFilter] = useState<'all' | 'khata' | 'settlement' | 'instant'>('all');
+  const { addToast } = useToast();
 
   useEffect(() => {
     loadCustomers();
@@ -99,6 +101,12 @@ export const CustomerPage: React.FC = () => {
 
   const handleSettleDues = async () => {
     if (!settleModal || settleAmount <= 0) return;
+
+    const currentBalance = settleModal.khataBalance || settleModal.activeKhataAmount || 0;
+    if (settleAmount > currentBalance) {
+      addToast(`Amount cannot exceed current balance of ₹${currentBalance}`, 'error');
+      return;
+    }
 
     setIsProcessing(true);
     try {
@@ -421,8 +429,14 @@ export const CustomerPage: React.FC = () => {
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-2xl font-black text-gray-400">₹</span>
                   <input
                     type="number"
-                    value={settleAmount}
-                    onChange={(e) => setSettleAmount(parseFloat(e.target.value) || 0)}
+                    value={settleAmount === 0 ? '' : settleAmount}
+                    placeholder="0"
+                    onChange={(e) => {
+                      const rawVal = parseFloat(e.target.value) || 0;
+                      const cappedVal = Math.min(rawVal, 10000000);
+                      const finalVal = Math.min(cappedVal, settleModal.khataBalance || settleModal.activeKhataAmount || 0);
+                      setSettleAmount(finalVal);
+                    }}
                     className="w-full bg-gray-50 dark:bg-gray-900 py-6 px-10 rounded-3xl text-3xl font-black text-gray-900 dark:text-white outline-none focus:ring-2 focus:ring-primary-green/20"
                   />
                 </div>
